@@ -2,8 +2,9 @@ from PIL import Image, ImageFont, ImageDraw, ImageOps
 import os, glob
 from math import ceil
 
-def BuildFont(fontname, fontsize):
-    f= ImageFont.truetype(fontname, fontsize)
+def BuildFont(fontname, fontsize,index=0):
+    f= ImageFont.truetype(fontname, fontsize,index=index)
+    print("Loaded:",f.getname())
     def gs(text):
         l,t,r,b=f.getbbox(text)
         line_width=r-l

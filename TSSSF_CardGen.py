@@ -17,6 +17,7 @@ card_set = os.path.dirname("deck.cards")
 CardSet = os.path.dirname("deck.cards")
 CardPath = DIRECTORY+"/Card-Art/"
 ResourcePath = DIRECTORY+"/resources/"
+FontsPath = DIRECTORY+"/fonts/"
 BleedsPath = DIRECTORY+"/bleed-images/"
 CropPath = DIRECTORY+"/cropped-images/"
 VassalPath = DIRECTORY+"/vassal-images/"
@@ -43,17 +44,59 @@ TextHeightThresholds = [363, 378, 600]
 TitleWidthThresholds = [50] #This is in #characters, fix later plox
 BarTextThreshold = [500]
 
+'''
+# ORIGINAL
+text_offset_barY=0
 fonts = {
-    "Title":PIL_Helper.BuildFont(ResourcePath+"TSSSFBartholomew-Bold.otf", 55),
-    "TitleSmall":PIL_Helper.BuildFont(ResourcePath+"TSSSFBartholomew-Bold.otf", 45),
-    "Body":PIL_Helper.BuildFont(ResourcePath+"TSSSFCabin-Medium.ttf", 35),
-    "BodySmall":PIL_Helper.BuildFont(ResourcePath+"TSSSFCabin-Medium.ttf", 35),
-    "BodyChangeling":PIL_Helper.BuildFont(ResourcePath+"TSSSFCabin-Medium.ttf", 31),
-    "Bar":PIL_Helper.BuildFont(ResourcePath+"TSSSFCabin-Medium.ttf", 38),
-    "BarSmall":PIL_Helper.BuildFont(ResourcePath+"TSSSFCabin-Medium.ttf", 35),
-    "Flavortext":PIL_Helper.BuildFont(ResourcePath+"KlinicSlabBookIt.otf", 28),
-    "Copyright":PIL_Helper.BuildFont(ResourcePath+"TSSSFCabin-Medium.ttf", 18)
+    "Title":PIL_Helper.BuildFont(FontsPath+"TSSSFBartholomew-Bold.otf", 55),
+    "TitleSmall":PIL_Helper.BuildFont(FontsPath+"TSSSFBartholomew-Bold.otf", 45),
+    "Body":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 35),
+    "BodySmall":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 35),
+    "BodyChangeling":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 31),
+    "Bar":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 38),
+    "BarSmall":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 35),
+    "Flavortext":PIL_Helper.BuildFont(FontsPath+"KlinicSlabBookIt.otf", 28),
+    "Copyright":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 18)
 }
+'''
+# JEJU
+text_offset_barY=+4
+fonts = {
+    "Title":PIL_Helper.BuildFont(FontsPath+"CookieRun Regular.ttf", 50),
+    "TitleSmall":PIL_Helper.BuildFont(FontsPath+"CookieRun Regular.ttf", 40),
+    "Body":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 32),
+    "BodySmall":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 32),
+    "BodyChangeling":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 28),
+    "Bar":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 38),
+    "BarSmall":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 35),
+    "Flavortext":PIL_Helper.BuildFont(FontsPath+"JejuMyeongjo.ttf", 24),
+    "Copyright":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 18)
+}
+
+'''
+# NOTO
+font_index=1
+fonts = {
+    "Title":PIL_Helper.BuildFont(
+        FontsPath+"CookieRun Regular.ttf", 55),
+    "TitleSmall":PIL_Helper.BuildFont(
+        FontsPath+"CookieRun Regular.ttf", 45),
+    "Body":PIL_Helper.BuildFont(
+        FontsPath+"NotoSansCJK-Medium.ttc", 30,font_index),
+    "BodySmall":PIL_Helper.BuildFont(
+        FontsPath+"NotoSansCJK-Medium.ttc", 30,font_index),
+    "BodyChangeling":PIL_Helper.BuildFont(
+        FontsPath+"NotoSansCJK-Medium.ttc", 27,font_index),
+    "Bar":PIL_Helper.BuildFont(
+        FontsPath+"NotoSansCJK-Regular.ttc", 38,font_index),
+    "BarSmall":PIL_Helper.BuildFont(
+        FontsPath+"NotoSansCJK-Regular.ttc", 35,font_index),
+    "Flavortext":PIL_Helper.BuildFont(
+        FontsPath+"NotoSansCJK-Light.ttc", 24,font_index),
+    "Copyright":PIL_Helper.BuildFont(
+        FontsPath+"TSSSFCabin-Medium.ttf", 18)
+}
+'''
 
 Anchors = {
     "Blank": (base_w_center, 300),
@@ -68,7 +111,7 @@ Anchors = {
     "Title": (-65-50, 160),
     "TitleTwoLine": (-65-50, 159),
     "TitleSmall": (-65-50, 157),
-    "Bar": (-68-50, 598+67),
+    "Bar": (-68-50, 598+67+text_offset_barY),
     "Body": (base_w_center, 735),
     "BodyShiftedUp": (base_w_center, 730),
     "Flavor": (base_w_center, -110),
