@@ -1,7 +1,10 @@
 import csv
 
 def unwhite(s):
-	return s.replace(" ","").replace("\n","").replace("\t","").lower()
+	return s.replace(" ","").replace("\n","").replace("\t","").replace(".","").replace("-","").replace('"','').lower()
+	
+def unescape(s):
+	return s.replace("\\n","\n")
 def escape(s):
 	return repr(s)[1:-1]
 	
@@ -65,9 +68,12 @@ def parse_csv(filepath,is_goal=False):
 				if cell:
 					dat[tagkey]=cell
 			'''
-			print("Add Transl. Entry:",key)
+			#print("Add Transl. Entry:",key)
+			if key in res:
+				print("DUPLICATE ENTRY!",key)
 			res[key]=dat
 		i+=1
+	print(F"{filepath} parsed: {len(res)} entries")
 	return res
 
 
@@ -85,6 +91,7 @@ with open("TSSSF/Core 1.1.5/cards.pon","r",encoding="utf-8") as f:
 orig_lines=orig_pon.split("\n")
 translated_lines=[]
 
+print("Translating...")
 for orig_line in orig_lines:
 	orig_tags=orig_line.split('`')
 	#print(orig_tags)
@@ -96,8 +103,8 @@ for orig_line in orig_lines:
 	body=orig_tags[5]
 	flavor=orig_tags[6]
 	
-	key=unwhite(title)
-	print("Finding",key)
+	key=unwhite(unescape(title))
+	#print("Finding",key)
 	if key in translation_data:
 		
 		dat=translation_data[key]
@@ -110,14 +117,16 @@ for orig_line in orig_lines:
 		if "flavor" in dat:
 			flavor=escape(dat["flavor"])
 		
-		print("  Trans data found:",dat)
+		#print("  Trans data found:",dat)
 	else:
-		print("  No trans data")
+		print(" ### No trans data found!",key)
 	
 	translated_tags=orig_tags[:3]+[title,keyword,body,flavor]+orig_tags[7:]
 	#print(translated_tags)
 	
 	translated_lines.append('`'.join(translated_tags))
+print(F"Translated {len(translated_lines)} entries.")
+
 
 with open("TSSSF/Core 1.1.5/cardsKR.pon","w",encoding="utf-8") as f:
 	f.write("\n".join(translated_lines))

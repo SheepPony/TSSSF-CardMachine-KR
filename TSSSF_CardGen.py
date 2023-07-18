@@ -22,6 +22,78 @@ BleedsPath = DIRECTORY+"/bleed-images/"
 CropPath = DIRECTORY+"/cropped-images/"
 VassalPath = DIRECTORY+"/vassal-images/"
 
+
+import collections
+FontParams=collections.namedtuple(
+    "FontParams",[
+        "fTitle","fTitleSmall",
+        "fBody","fBodySmall","fBodySmaller",
+        "fBar","fBarSmall",
+        "fFlavor",
+        "fCopyright",
+        "offsetBarY",
+        "offsetBodyLeading",
+        "offsetFlavorLeading",
+        "titleWidthThresh",
+        "offsetTitleLeading"])
+
+# ORIGINAL
+fpOriginal=FontParams(
+    fTitle=       (FontsPath+"TSSSFBartholomew-Bold.otf", 55),
+    fTitleSmall=  (FontsPath+"TSSSFBartholomew-Bold.otf", 45),
+    fBody=        (FontsPath+"TSSSFCabin-Medium.ttf",     35),
+    fBodySmall=   (FontsPath+"TSSSFCabin-Medium.ttf",     35),
+    fBodySmaller= (FontsPath+"TSSSFCabin-Medium.ttf",     31),
+    fBar=         (FontsPath+"TSSSFCabin-Medium.ttf",     38),
+    fBarSmall=    (FontsPath+"TSSSFCabin-Medium.ttf",     35),
+    fFlavor=      (FontsPath+"KlinicSlabBookIt.otf",      28),
+    fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf",     18),
+    offsetBarY=           0,
+    offsetBodyLeading=    0,
+    offsetFlavorLeading=  0,
+    titleWidthThresh=     50,
+    offsetTitleLeading=   0)
+
+# JEJU
+fpJeju=FontParams(
+    fTitle=       (FontsPath+"CookieRun Bold.ttf", 48),
+    fTitleSmall=  (FontsPath+"CookieRun Bold.ttf", 38),
+    fBody=        (FontsPath+"JejuGothic.ttf",        32),
+    fBodySmall=   (FontsPath+"JejuGothic.ttf",        32),
+    fBodySmaller= (FontsPath+"JejuGothic.ttf",        28),
+    fBar=         (FontsPath+"JejuGothic.ttf",        35),
+    fBarSmall=    (FontsPath+"JejuGothic.ttf",        32),
+    fFlavor=      (FontsPath+"JejuMyeongjo.ttf",      24),
+    fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
+    offsetBarY=          +6,
+    offsetBodyLeading=   +5,
+    offsetFlavorLeading=  0,
+    titleWidthThresh=     16,
+    offsetTitleLeading=  +4)
+
+# NOTO
+font_index=1
+fpNoto=FontParams(
+    fTitle=       (FontsPath+"CookieRun Regular.ttf", 55),
+    fTitleSmall=  (FontsPath+"CookieRun Regular.ttf", 45),
+    fBody=        (FontsPath+"NotoSansCJK-Medium.ttc", 30,font_index),
+    fBodySmall=   (FontsPath+"NotoSansCJK-Medium.ttc", 30,font_index),
+    fBodySmaller= (FontsPath+"NotoSansCJK-Medium.ttc", 27,font_index),
+    fBar=         (FontsPath+"NotoSansCJK-Regular.ttc", 35,font_index),
+    fBarSmall=    (FontsPath+"NotoSansCJK-Regular.ttc", 32,font_index),
+    fFlavor=      (FontsPath+"NotoSansCJK-Light.ttc", 24,font_index),
+    fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
+    offsetBarY=          -4,
+    offsetBodyLeading=   -4,
+    offsetFlavorLeading= -2,
+    titleWidthThresh=     16,
+    offsetTitleLeading=   0)
+
+
+fontparam=fpJeju
+
+
+
 VassalTemplatesPath = DIRECTORY+"/vassal templates/"
 VassalWorkspacePath = DIRECTORY+"/vassal workspace/"
 VassalImagesPath = os.path.join(VassalWorkspacePath, "images")
@@ -41,62 +113,26 @@ textmaxwidth = 689
 croprect=(50,63,788+50,1088+63)
 
 TextHeightThresholds = [363, 378, 600]
-TitleWidthThresholds = [50] #This is in #characters, fix later plox
-BarTextThreshold = [500]
+TitleWidthThresholds = [fontparam.titleWidthThresh] #This is in #characters, fix later plox
+BarTextThreshold = [500] #pixels
 
-'''
-# ORIGINAL
-text_offset_barY=0
+
+
 fonts = {
-    "Title":PIL_Helper.BuildFont(FontsPath+"TSSSFBartholomew-Bold.otf", 55),
-    "TitleSmall":PIL_Helper.BuildFont(FontsPath+"TSSSFBartholomew-Bold.otf", 45),
-    "Body":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 35),
-    "BodySmall":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 35),
-    "BodyChangeling":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 31),
-    "Bar":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 38),
-    "BarSmall":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 35),
-    "Flavortext":PIL_Helper.BuildFont(FontsPath+"KlinicSlabBookIt.otf", 28),
-    "Copyright":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 18)
-}
-'''
-# JEJU
-text_offset_barY=+4
-fonts = {
-    "Title":PIL_Helper.BuildFont(FontsPath+"CookieRun Regular.ttf", 50),
-    "TitleSmall":PIL_Helper.BuildFont(FontsPath+"CookieRun Regular.ttf", 40),
-    "Body":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 32),
-    "BodySmall":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 32),
-    "BodyChangeling":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 28),
-    "Bar":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 38),
-    "BarSmall":PIL_Helper.BuildFont(FontsPath+"JejuGothic.ttf", 35),
-    "Flavortext":PIL_Helper.BuildFont(FontsPath+"JejuMyeongjo.ttf", 24),
-    "Copyright":PIL_Helper.BuildFont(FontsPath+"TSSSFCabin-Medium.ttf", 18)
+    "Title":PIL_Helper.BuildFont(*fontparam.fTitle),
+    "TitleSmall":PIL_Helper.BuildFont(*fontparam.fTitleSmall),
+    "Body":PIL_Helper.BuildFont(*fontparam.fBody),
+    "BodySmall":PIL_Helper.BuildFont(*fontparam.fBodySmall),
+    "BodyChangeling":PIL_Helper.BuildFont(*fontparam.fBodySmaller),
+    "Bar":PIL_Helper.BuildFont(*fontparam.fBar),
+    "BarSmall":PIL_Helper.BuildFont(*fontparam.fBarSmall),
+    "Flavortext":PIL_Helper.BuildFont(*fontparam.fFlavor),
+    "Copyright":PIL_Helper.BuildFont(*fontparam.fCopyright)
 }
 
-'''
-# NOTO
-font_index=1
-fonts = {
-    "Title":PIL_Helper.BuildFont(
-        FontsPath+"CookieRun Regular.ttf", 55),
-    "TitleSmall":PIL_Helper.BuildFont(
-        FontsPath+"CookieRun Regular.ttf", 45),
-    "Body":PIL_Helper.BuildFont(
-        FontsPath+"NotoSansCJK-Medium.ttc", 30,font_index),
-    "BodySmall":PIL_Helper.BuildFont(
-        FontsPath+"NotoSansCJK-Medium.ttc", 30,font_index),
-    "BodyChangeling":PIL_Helper.BuildFont(
-        FontsPath+"NotoSansCJK-Medium.ttc", 27,font_index),
-    "Bar":PIL_Helper.BuildFont(
-        FontsPath+"NotoSansCJK-Regular.ttc", 38,font_index),
-    "BarSmall":PIL_Helper.BuildFont(
-        FontsPath+"NotoSansCJK-Regular.ttc", 35,font_index),
-    "Flavortext":PIL_Helper.BuildFont(
-        FontsPath+"NotoSansCJK-Light.ttc", 24,font_index),
-    "Copyright":PIL_Helper.BuildFont(
-        FontsPath+"TSSSFCabin-Medium.ttf", 18)
-}
-'''
+
+
+
 
 Anchors = {
     "Blank": (base_w_center, 300),
@@ -111,7 +147,7 @@ Anchors = {
     "Title": (-65-50, 160),
     "TitleTwoLine": (-65-50, 159),
     "TitleSmall": (-65-50, 157),
-    "Bar": (-68-50, 598+67+text_offset_barY),
+    "Bar": (-68-50, 598+67+fontparam.offsetBarY),
     "Body": (base_w_center, 735),
     "BodyShiftedUp": (base_w_center, 730),
     "Flavor": (base_w_center, -110),
@@ -434,7 +470,7 @@ def BodyText(image, text, color, flavor_text_size=0, font=None):
     if font is None:
         font = fonts["Body"]
     anchor = Anchors["Body"]
-    leading = -1
+    leading = -1+fontparam.offsetBodyLeading
     # Get the size of the body text as (w,h)
     body_text_size = PIL_Helper.GetTextBlockSize(
         text, fonts["Body"], textmaxwidth
@@ -453,7 +489,7 @@ def BodyText(image, text, color, flavor_text_size=0, font=None):
         # the changeling cards
         if body_text_size[1] + flavor_text_size[1] > TextHeightThresholds[1]:
             font = fonts["BodyChangeling"]
-            leading = -3
+            leading = -3+fontparam.offsetBodyLeading
     Anchors["BodyShiftedUp"]
     PIL_Helper.AddText(
         image = image,
@@ -475,7 +511,7 @@ def FlavorText(image, text, color):
         anchor = Anchors["Flavor"],
         valign = "bottom",
         halign = "center",
-        leading_offset=+1,
+        leading_offset=+1+fontparam.offsetFlavorLeading,
         max_width = textmaxwidth,
         )
 
