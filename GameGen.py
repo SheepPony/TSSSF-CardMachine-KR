@@ -27,9 +27,11 @@ def main(folder="TSSSF", filepath="Core 1.0.3/deck.cards"):
     # Read first line of file to determine module
     first_line = CardFile.readline()
     try:
-        module = __import__(first_line.strip())
+        import_target="TSSSF_CardGen"#first_line.strip()
+        print("Importing:",import_target)
+        module = __import__(import_target)
     except ValueError:
-        print "Failed to load module: " + str(ValueError)
+        print("Failed to load module: " + str(ValueError))
         return
     module.CardSet = card_set
 
@@ -69,7 +71,7 @@ def main(folder="TSSSF", filepath="Core 1.0.3/deck.cards"):
         # do that now, and set the card list to empty again
         if len(card_list) >= module.TOTAL_CARDS:
             page_num += 1
-            print "Building Page {}...".format(page_num)
+            print("Building Page {}...".format(page_num))
             BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
             BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
             card_list = []
@@ -83,18 +85,18 @@ def main(folder="TSSSF", filepath="Core 1.0.3/deck.cards"):
             card_list.append(module.BuildCard("BLANK"))
             back_list.append(module.BuildCard("BLANK"))
         page_num += 1
-        print "Building Page {}...".format(page_num)
+        print("Building Page {}...".format(page_num))
         BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
         BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
 
     #Build Vassal
     module.CompileVassalModule()
 
-    print "\nCreating PDF..."
+    print("\nCreating PDF...")
     os.system(r'convert "{}/page_*.png" "{}/{}.pdf"'.format(workspace_path, output_folder, card_set))
-    print "\nCreating PDF of backs..."
+    print("\nCreating PDF of backs...")
     os.system(r'convert "{}/backs_*.png" "{}/backs_{}.pdf"'.format(workspace_path, output_folder, card_set))
-    print "Done!"
+    print("Done!")
 
 if __name__ == '__main__':
     # To run this script, you have two options:
@@ -115,8 +117,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    main(args.basedir, args.set_file)
-    #main('TSSSF', '1.1.0 Patch/cards.pon')
+    #main(args.basedir, args.set_file)
+    main('TSSSF', 'Core 1.1.5/cards.pon')
     #main('TSSSF', '2014 Con Exclusives/cards.pon')
     #main('TSSSF', 'BABScon 2015/cards.pon')
     #main('TSSSF', 'Core 1.0.5/cards.pon')

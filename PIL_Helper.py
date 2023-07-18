@@ -3,7 +3,16 @@ import os, glob
 from math import ceil
 
 def BuildFont(fontname, fontsize):
-    return ImageFont.truetype(fontname, fontsize)
+    f= ImageFont.truetype(fontname, fontsize)
+    def gs(text):
+        l,t,r,b=f.getbbox(text)
+        line_width=r-l
+        line_height=b-t
+        assert line_width>=0
+        assert line_height>=0
+        return round(line_width),round(line_height)
+    f.getsize=gs
+    return f
 
 def WrapText(text, font, max_width):
     '''
@@ -101,6 +110,7 @@ def AddText(image, text, font, fill=(0,0,0), anchor=(0,0),
         # If current line is blank, just change y and skip to next
         if not line == "":
             line_width, line_height = font.getsize(line)
+            
             if halign == "left":
                 x_pos = start_x
             elif halign == "center":
@@ -136,9 +146,13 @@ def AddText(image, text, font, fill=(0,0,0), anchor=(0,0),
     x, y = image.size
     anchor_x = anchor[0]+x if anchor[0] < 0 else anchor[0]
     anchor_y = anchor[1]+y if anchor[1] < 0 else anchor[1]
+    
+    anchor_x=round(anchor_x)
+    anchor_y=round(anchor_y)
         
     # Determine the anchor point for the new layer
     width, height = layer.size
+    #print(F"W{width} H{height} AX{anchor_x} AY{anchor_y}")
     if halign == "left":
         coords_x = anchor_x
     elif halign == "center":
@@ -152,6 +166,9 @@ def AddText(image, text, font, fill=(0,0,0), anchor=(0,0),
     elif valign == "bottom":
         coords_y = anchor_y - height
     
+    coords_x=round(coords_x)
+    coords_y=round(coords_y)
+    #print(F"CX{coords_x} CY{coords_y}")
     image.paste(ImageOps.colorize(layer, (255,255,255), fill),
                 (coords_x, coords_y), layer)
 
@@ -169,8 +186,8 @@ def BuildPage(card_list, grid_width, grid_height, filename,
     w,h = card_list[0].size
     bg = Image.new("RGB", (w*grid_width, h*grid_height))
     # Add cards to the grid, top down, left to right
-    for y in xrange(grid_height):
-        for x in xrange(grid_width):
+    for y in range(grid_height):
+        for x in range(grid_width):
             card = card_list.pop(0)
             coords = (x*(w+cut_line_width),
                       y*(h+cut_line_width))
@@ -193,7 +210,7 @@ def BuildPage(card_list, grid_width, grid_height, filename,
     w,h = bg.size
     # TODO Add code that shrinks the bg if it's bigger than any dimension
     # of the Paper image
-    paper_image.paste(bg, ((paper_width - w)/2, (paper_height - h)/2))
+    paper_image.paste(bg, ((paper_width - w)//2, (paper_height - h)//2))
     paper_image.save(filename, dpi=(300, 300))
 
 def BlankImage(w, h, color=(255,255,255), image_type="RGBA"):
@@ -208,7 +225,7 @@ def LoadImage(filepath, fallback="blank.png"):
         else:
             raise
 
-def ResizeImage(image, size, method=Image.ANTIALIAS):
+def ResizeImage(image, size, method=Image.Resampling.BICUBIC):
     return image.resize(size, method)
 
 def DrawRect(image, x, y, width, height, color):

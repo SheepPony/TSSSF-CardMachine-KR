@@ -15,7 +15,7 @@ TOTAL_CARDS = PAGE_WIDTH*PAGE_HEIGHT
 workspace_path = os.path.dirname("workspace")
 card_set = os.path.dirname("deck.cards")
 CardSet = os.path.dirname("deck.cards")
-CardPath = DIRECTORY+"/Card Art/"
+CardPath = DIRECTORY+"/Card-Art/"
 ResourcePath = DIRECTORY+"/resources/"
 BleedsPath = DIRECTORY+"/bleed-images/"
 CropPath = DIRECTORY+"/cropped-images/"
@@ -126,30 +126,30 @@ Symbols = {
 TIMELINE_SYMBOL_LIST = ["Dystopian"]
 
 Expansions = {
-    "Everfree14": PIL_Helper.LoadImage(ResourcePath+"/symbol-Everfree14.png"),
+#    "Everfree14": PIL_Helper.LoadImage(ResourcePath+"/symbol-Everfree14.png"),
     "Indiegogo": PIL_Helper.LoadImage(ResourcePath+"/symbol-Indiegogo.png"),
-    "Birthday": PIL_Helper.LoadImage(ResourcePath+"/symbol-birthday.png"),
-    "Bronycon": PIL_Helper.LoadImage(ResourcePath+"/symbol-Bronycon14.png"),
-    "Summer": PIL_Helper.LoadImage(ResourcePath+"/symbol-summer-lovin.png"),
-    "Apricity": PIL_Helper.LoadImage(ResourcePath+"/symbol-apricity.png"),
-    "BronyCAN": PIL_Helper.LoadImage(ResourcePath+"/symbol-Bronycan14.png"),
+#    "Birthday": PIL_Helper.LoadImage(ResourcePath+"/symbol-birthday.png"),
+#    "Bronycon": PIL_Helper.LoadImage(ResourcePath+"/symbol-Bronycon14.png"),
+#    "Summer": PIL_Helper.LoadImage(ResourcePath+"/symbol-summer-lovin.png"),
+#    "Apricity": PIL_Helper.LoadImage(ResourcePath+"/symbol-apricity.png"),
+#    "BronyCAN": PIL_Helper.LoadImage(ResourcePath+"/symbol-Bronycan14.png"),
     "Xtra": PIL_Helper.LoadImage(ResourcePath+"/symbol-extracredit.png"),
-    "Xtra-dark": PIL_Helper.LoadImage(ResourcePath+"/symbol-extracredit-black.png"),
-    "NMND": PIL_Helper.LoadImage(ResourcePath+"/symbol-nightmarenights.png"),
-    "Ciderfest": PIL_Helper.LoadImage(ResourcePath+"/symbol-ponyvilleciderfest.png"),
-    "Adventure": PIL_Helper.LoadImage(ResourcePath+"/symbol-adventure.png"),
-    "Custom": PIL_Helper.LoadImage(ResourcePath+"/symbol-custom.png"),
-    "Power": PIL_Helper.LoadImage(ResourcePath+"/symbol-power.png"),
-    "Multiplicity": PIL_Helper.LoadImage(ResourcePath+"/symbol-multiplicity.png"),
-    "Canon": PIL_Helper.LoadImage(ResourcePath+"/symbol-canon.png"),
-    "Dungeon": PIL_Helper.LoadImage(ResourcePath+"/symbol-dungeon.png"),
-    "50": PIL_Helper.LoadImage(ResourcePath+"/symbol-50.png"),
-    "2014": PIL_Helper.LoadImage(ResourcePath+"/symbol-2014.png"),
-    "Hearthswarming": PIL_Helper.LoadImage(ResourcePath+"/symbol-hearthswarming.png"),
-    "Ponycon 2015": PIL_Helper.LoadImage(ResourcePath+"/symbol-ponynyc.png"),
-    "Patreon": PIL_Helper.LoadImage(ResourcePath+"/symbol-Patreon.png"),
-    "Gameshow": PIL_Helper.LoadImage(ResourcePath+"/symbol-gameshow.png"),
-    "BABScon": PIL_Helper.LoadImage(ResourcePath+"/symbol-BABScon.png")
+#    "Xtra-dark": PIL_Helper.LoadImage(ResourcePath+"/symbol-extracredit-black.png"),
+#    "NMND": PIL_Helper.LoadImage(ResourcePath+"/symbol-nightmarenights.png"),
+#    "Ciderfest": PIL_Helper.LoadImage(ResourcePath+"/symbol-ponyvilleciderfest.png"),
+#    "Adventure": PIL_Helper.LoadImage(ResourcePath+"/symbol-adventure.png"),
+#    "Custom": PIL_Helper.LoadImage(ResourcePath+"/symbol-custom.png"),
+#    "Power": PIL_Helper.LoadImage(ResourcePath+"/symbol-power.png"),
+#    "Multiplicity": PIL_Helper.LoadImage(ResourcePath+"/symbol-multiplicity.png"),
+#    "Canon": PIL_Helper.LoadImage(ResourcePath+"/symbol-canon.png"),
+#    "Dungeon": PIL_Helper.LoadImage(ResourcePath+"/symbol-dungeon.png"),
+#    "50": PIL_Helper.LoadImage(ResourcePath+"/symbol-50.png"),
+#    "2014": PIL_Helper.LoadImage(ResourcePath+"/symbol-2014.png"),
+#    "Hearthswarming": PIL_Helper.LoadImage(ResourcePath+"/symbol-hearthswarming.png"),
+#    "Ponycon 2015": PIL_Helper.LoadImage(ResourcePath+"/symbol-ponynyc.png"),
+#    "Patreon": PIL_Helper.LoadImage(ResourcePath+"/symbol-Patreon.png"),
+#    "Gameshow": PIL_Helper.LoadImage(ResourcePath+"/symbol-gameshow.png"),
+#    "BABScon": PIL_Helper.LoadImage(ResourcePath+"/symbol-BABScon.png")
     }
 
 ColorDict={
@@ -269,7 +269,7 @@ def BuildCard(linein):
             im_crop=im.crop(croprect)
         #MakeVassalCard(im_cropped)
     except Exception as e:
-        print "Warning, Bad Card: {0}".format(tags)
+        print("Warning, Bad Card: {0}".format(tags))
         traceback.print_exc()
         im_crop = MakeBlankCard().crop(croprect)
     #im.show()  # TEST
@@ -355,7 +355,7 @@ def TitleText(image, text, color):
     if len(text)>TitleWidthThresholds[0]:
         anchor = Anchors["TitleSmall"]
         font = fonts["TitleSmall"]
-    print repr(text)
+    print(repr(text))
     PIL_Helper.AddText(
         image = image,
         text = text,
@@ -527,7 +527,7 @@ def MakeGoalCard(tags):
     return image
 
 def MakeSpecialCard(picture):
-    print repr(picture)
+    print(repr(picture))
     return GetFrame(picture)
 
 def InitVassalModule():
@@ -542,4 +542,6 @@ def CompileVassalModule():
     pass
 
 if __name__ == "__main__":
-    print "Not a main module. Run GameGen.py"
+    print("Not a main module. Run GameGen.py")
+else:
+    print("TSSSF Module imported!")
