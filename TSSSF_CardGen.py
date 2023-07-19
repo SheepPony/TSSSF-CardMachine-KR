@@ -1,10 +1,16 @@
 import os, glob, shutil, traceback, random
 import PIL_Helper
 
+LANGMODE="EN"
+assert LANGMODE in ("EN","KR")
+
 TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range(9)
 DIRECTORY = "TSSSF"
 ARTIST = "Pixel Prism"
-
+if LANGMODE=="KR":
+    VERSION_ADDITIONAL='Translation by CESS 0.01'
+else:
+    VERSION_ADDITIONAL=''
 
 LegacySymbolMode = False
 PAGE_WIDTH = 3
@@ -14,13 +20,13 @@ TOTAL_CARDS = PAGE_WIDTH*PAGE_HEIGHT
 
 workspace_path = os.path.dirname("workspace")
 card_set = os.path.dirname("deck.cards")
-CardSet = os.path.dirname("deck.cards")
+CardSet = os.path.dirname("deck.cards") # will be set by GameGen.py
 CardPath = DIRECTORY+"/Card-Art/"
 ResourcePath = DIRECTORY+"/resources/"
 FontsPath = DIRECTORY+"/fonts/"
-BleedsPath = DIRECTORY+"/bleed-images/"
-CropPath = DIRECTORY+"/cropped-images/"
-VassalPath = DIRECTORY+"/vassal-images/"
+BleedsPath = DIRECTORY+"/bleed-images/" # will be set by GameGen.py
+CropPath = DIRECTORY+"/cropped-images/" # will be set by GameGen.py
+VassalPath = DIRECTORY+"/vassal-images/" # will be set by GameGen.py
 
 
 import collections
@@ -68,7 +74,7 @@ fpJeju=FontParams(
     offsetBarY=          +6,
     offsetBodyLeading=   +5,
     offsetFlavorLeading=  0,
-    titleWidthThresh=     16,
+    titleWidthThresh=     14,
     offsetTitleLeading=  +8)
 
 # NOTO
@@ -89,9 +95,12 @@ fpNoto=FontParams(
     titleWidthThresh=     16,
     offsetTitleLeading=   0)
 
-
-fontparam=fpJeju
-
+if LANGMODE=="EN":
+    fontparam=fpOriginal#fpJeju
+elif LANGMODE=="KR":
+    fontparam=fpJeju
+else:
+    0/0
 
 
 VassalTemplatesPath = DIRECTORY+"/vassal templates/"
@@ -165,7 +174,11 @@ ArtMissing = [
     PIL_Helper.LoadImage(CardPath+"/artmissing07.png"),
     ]
 
-card_blank_postfix='-kor'
+if LANGMODE=="KR":
+    card_blank_postfix='-kor'
+else:
+    card_blank_postfix=''
+    
 Frames = {
     "START": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Start-bleed{card_blank_postfix}.png"),
     "Warning": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - Warning.png"),
@@ -230,6 +243,7 @@ Expansions = {
 #    "Patreon": PIL_Helper.LoadImage(ResourcePath+"/symbol-Patreon.png"),
 #    "Gameshow": PIL_Helper.LoadImage(ResourcePath+"/symbol-gameshow.png"),
 #    "BABScon": PIL_Helper.LoadImage(ResourcePath+"/symbol-BABScon.png")
+    "Korean": PIL_Helper.LoadImage(ResourcePath+"/symbol-www.png")
     }
 
 ColorDict={
@@ -527,6 +541,8 @@ def CopyrightText(tags, image, color):
     #print tags[CLIENT], repr(tags)
     if len(tags)-1 >= CLIENT:
         card_set += " " + str(tags[CLIENT])
+    if VERSION_ADDITIONAL:
+        card_set+="; "+VERSION_ADDITIONAL
     text = "{}; TSSSF by Horrible People Games. Art by {}.".format(
         card_set,
         ARTIST
