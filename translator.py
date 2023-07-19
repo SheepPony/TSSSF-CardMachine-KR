@@ -7,13 +7,23 @@ def unescape(s):
 	return s.replace("\\n","\n")
 def escape(s):
 	return repr(s)[1:-1]
+
+
+with open("TranslationData/mapping.csv","r",encoding="utf-8") as f:
+	csv_rows=list(csv.reader(f))
+csv_rows=csv_rows[2:]
+
+keyword_mappings=dict()
+for row in csv_rows:
+	k=row[1]
+	v=row[3]
+	keyword_mappings[k]=v
 	
-translation_files=[
-	"TranslationData/pony.csv",
-	"TranslationData/goal.csv",
-	"TranslationData/ship.csv"]
-
-
+def apply_mappings(s):
+	for k in keyword_mappings:
+		v=keyword_mappings[k]
+		s=s.replace(k,v)
+	return s
 
 def parse_csv(filepath,is_goal=False):
 	res=dict()
@@ -42,6 +52,7 @@ def parse_csv(filepath,is_goal=False):
 				if (j!=0) and (row[1].strip()): # next entry!
 					break
 				if cell:
+					
 					taglines.append(cell)
 			if not taglines[-1]:
 				del taglines[-1]
@@ -113,7 +124,7 @@ for orig_line in orig_lines:
 		if "keyword" in dat:
 			keyword=escape(dat["keyword"])
 		if "body" in dat:
-			body=escape(dat["body"])
+			body=apply_mappings(escape(dat["body"]))
 		if "flavor" in dat:
 			flavor=escape(dat["flavor"])
 		

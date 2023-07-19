@@ -58,18 +58,18 @@ fpOriginal=FontParams(
 fpJeju=FontParams(
     fTitle=       (FontsPath+"CookieRun Bold.ttf", 48),
     fTitleSmall=  (FontsPath+"CookieRun Bold.ttf", 38),
-    fBody=        (FontsPath+"JejuGothic.ttf",        32),
-    fBodySmall=   (FontsPath+"JejuGothic.ttf",        32),
-    fBodySmaller= (FontsPath+"JejuGothic.ttf",        28),
-    fBar=         (FontsPath+"JejuGothic.ttf",        35),
-    fBarSmall=    (FontsPath+"JejuGothic.ttf",        32),
+    fBody=        (FontsPath+"JejuGothicTSSSF.ttf",        32),
+    fBodySmall=   (FontsPath+"JejuGothicTSSSF.ttf",        32),
+    fBodySmaller= (FontsPath+"JejuGothicTSSSF.ttf",        28),
+    fBar=         (FontsPath+"JejuGothicTSSSF.ttf",        35),
+    fBarSmall=    (FontsPath+"JejuGothicTSSSF.ttf",        32),
     fFlavor=      (FontsPath+"JejuMyeongjo.ttf",      24),
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     offsetBarY=          +6,
     offsetBodyLeading=   +5,
     offsetFlavorLeading=  0,
     titleWidthThresh=     16,
-    offsetTitleLeading=  +4)
+    offsetTitleLeading=  +8)
 
 # NOTO
 font_index=1
@@ -165,15 +165,16 @@ ArtMissing = [
     PIL_Helper.LoadImage(CardPath+"/artmissing07.png"),
     ]
 
+card_blank_postfix='-kor'
 Frames = {
-    "START": PIL_Helper.LoadImage(ResourcePath+"/BLEED-Blank-Start-bleed.png"),
+    "START": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Start-bleed{card_blank_postfix}.png"),
     "Warning": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - Warning.png"),
-    "Pony": PIL_Helper.LoadImage(ResourcePath+"/BLEED-Blank-Pony-bleed.png"),
-    "Ship": PIL_Helper.LoadImage(ResourcePath+"/BLEED-Blank-Ship-bleed.png"),
+    "Pony": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Pony-bleed{card_blank_postfix}.png"),
+    "Ship": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Ship-bleed{card_blank_postfix}.png"),
     "Rules1": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules1.png"),
     "Rules3": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules3.png"),
     "Rules5": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules5.png"),
-    "Goal": PIL_Helper.LoadImage(ResourcePath+"/BLEED-Blank-Goal-bleed.png"),
+    "Goal": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Goal-bleed{card_blank_postfix}.png"),
     "Derpy": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - Derpy Hooves.png"),
     "TestSubject": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - OverlayTest Subject Cheerilee.png")
     }
@@ -443,7 +444,7 @@ def TitleText(image, text, color):
         anchor = anchor,
         valign = "center",
         halign = "right",
-        leading_offset = leading
+        leading_offset = leading+fontparam.offsetTitleLeading
         )
 
 def BarText(image, text, color):
