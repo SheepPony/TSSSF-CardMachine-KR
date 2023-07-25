@@ -1,7 +1,7 @@
 import os, glob, shutil, traceback, random
 import PIL_Helper
 
-LANGMODE="EN"
+LANGMODE="KR"
 assert LANGMODE in ("EN","KR")
 
 TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range(9)
@@ -188,7 +188,7 @@ Frames = {
     "Rules3": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules3.png"),
     "Rules5": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules5.png"),
     "Goal": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Goal-bleed{card_blank_postfix}.png"),
-    "Derpy": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - Derpy Hooves.png"),
+    "Derpy": PIL_Helper.LoadImage(CardPath+F"/BLEED_Card - Derpy Hooves{card_blank_postfix}.png"),
     "TestSubject": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - OverlayTest Subject Cheerilee.png")
     }
 
@@ -624,7 +624,9 @@ def MakeGoalCard(tags):
 
 def MakeSpecialCard(picture):
     print(repr(picture))
-    return GetFrame(picture)
+    image= GetFrame(picture)
+    CopyrightText([], image, ColorDict["Copyright"])
+    return image
 
 def InitVassalModule():
     pass

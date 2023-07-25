@@ -108,6 +108,8 @@ for orig_line in orig_lines:
 	#print(orig_tags)
 	
 	if len(orig_tags)<6:
+		translated_lines.append(orig_line)
+		print("Copying line",repr(orig_line))
 		continue
 	title=orig_tags[3]
 	keyword=orig_tags[4]
