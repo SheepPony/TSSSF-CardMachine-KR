@@ -1,5 +1,6 @@
 import os, glob, shutil, traceback, random
 import PIL_Helper
+import os.path
 
 LANGMODE="KR"
 assert LANGMODE in ("EN","KR")
@@ -174,21 +175,28 @@ ArtMissing = [
     PIL_Helper.LoadImage(CardPath+"/artmissing07.png"),
     ]
 
+
 if LANGMODE=="KR":
-    card_blank_postfix='-kor'
+    def trykor(fp):
+        fn,ex=os.path.splitext(fp)
+        kfp=fn+"-kor"+ex
+        if os.path.exists(kfp):
+            return kfp
+        else:
+            return fp
 else:
-    card_blank_postfix=''
+    trykor=lambda fp:fp
     
 Frames = {
-    "START": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Start-bleed{card_blank_postfix}.png"),
-    "Warning": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - Warning.png"),
-    "Pony": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Pony-bleed{card_blank_postfix}.png"),
-    "Ship": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Ship-bleed{card_blank_postfix}.png"),
+    "START": PIL_Helper.LoadImage(trykor(ResourcePath+"/BLEED-Blank-Start-bleed.png")),
+    "Warning": PIL_Helper.LoadImage(CardPath+"/Warning_.png"),
+    "Pony": PIL_Helper.LoadImage(trykor(ResourcePath+"/BLEED-Blank-Pony-bleed.png")),
+    "Ship": PIL_Helper.LoadImage(trykor(ResourcePath+"/BLEED-Blank-Ship-bleed.png")),
     "Rules1": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules1.png"),
     "Rules3": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules3.png"),
     "Rules5": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules5.png"),
-    "Goal": PIL_Helper.LoadImage(ResourcePath+F"/BLEED-Blank-Goal-bleed{card_blank_postfix}.png"),
-    "Derpy": PIL_Helper.LoadImage(CardPath+F"/BLEED_Card - Derpy Hooves{card_blank_postfix}.png"),
+    "Goal": PIL_Helper.LoadImage(trykor(ResourcePath+"/BLEED-Blank-Goal-bleed.png")),
+    "Derpy": PIL_Helper.LoadImage(trykor(CardPath+"/BLEED_Card - Derpy Hooves.png")),
     "TestSubject": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - OverlayTest Subject Cheerilee.png")
     }
 
