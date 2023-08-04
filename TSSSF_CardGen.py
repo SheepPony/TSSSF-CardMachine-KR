@@ -9,7 +9,7 @@ TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range
 DIRECTORY = "TSSSF"
 ARTIST = "Pixel Prism"
 if LANGMODE=="KR":
-    VERSION_ADDITIONAL='Translation by CESS 0.01'
+    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁 v0.02'
 else:
     VERSION_ADDITIONAL=''
 
@@ -38,6 +38,7 @@ FontParams=collections.namedtuple(
         "fBar","fBarSmall",
         "fFlavor",
         "fCopyright",
+        "fCopyrightTop",
         "offsetBarY",
         "offsetBodyLeading",
         "offsetFlavorLeading",
@@ -55,6 +56,7 @@ fpOriginal=FontParams(
     fBarSmall=    (FontsPath+"TSSSFCabin-Medium.ttf",     35),
     fFlavor=      (FontsPath+"KlinicSlabBookIt.otf",      28),
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf",     18),
+    fCopyrightTop=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     offsetBarY=           0,
     offsetBodyLeading=    0,
     offsetFlavorLeading=  0,
@@ -72,6 +74,7 @@ fpJeju=FontParams(
     fBarSmall=    (FontsPath+"JejuGothicTSSSF.ttf",        32),
     fFlavor=      (FontsPath+"JejuMyeongjo.ttf",      24),
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
+    fCopyrightTop=   (FontsPath+"JejuGothicTSSSF.ttf", 18),
     offsetBarY=          +6,
     offsetBodyLeading=   +5,
     offsetFlavorLeading=  0,
@@ -90,6 +93,7 @@ fpNoto=FontParams(
     fBarSmall=    (FontsPath+"NotoSansCJK-Regular.ttc", 32,font_index),
     fFlavor=      (FontsPath+"NotoSansCJK-Light.ttc", 24,font_index),
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
+    fCopyrightTop=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     offsetBarY=          -4,
     offsetBodyLeading=   -4,
     offsetFlavorLeading= -2,
@@ -137,7 +141,8 @@ fonts = {
     "Bar":PIL_Helper.BuildFont(*fontparam.fBar),
     "BarSmall":PIL_Helper.BuildFont(*fontparam.fBarSmall),
     "Flavortext":PIL_Helper.BuildFont(*fontparam.fFlavor),
-    "Copyright":PIL_Helper.BuildFont(*fontparam.fCopyright)
+    "Copyright":PIL_Helper.BuildFont(*fontparam.fCopyright),
+    "CopyrightTop":PIL_Helper.BuildFont(*fontparam.fCopyrightTop)
 }
 
 
@@ -162,7 +167,8 @@ Anchors = {
     "BodyShiftedUp": (base_w_center, 730),
     "Flavor": (base_w_center, -110),
     "Expansion": (640+50, 525+63),
-    "Copyright": (-38-50, -13-61)
+    "Copyright": (-38-50, -13-61),
+    "CopyrightTop": (-38-50, 92)
 }
 
 ArtMissing = [
@@ -549,8 +555,8 @@ def CopyrightText(tags, image, color):
     #print tags[CLIENT], repr(tags)
     if len(tags)-1 >= CLIENT:
         card_set += " " + str(tags[CLIENT])
-    if VERSION_ADDITIONAL:
-        card_set+="; "+VERSION_ADDITIONAL
+    
+        
     text = "{}; TSSSF by Horrible People Games. Art by {}.".format(
         card_set,
         ARTIST
@@ -564,6 +570,18 @@ def CopyrightText(tags, image, color):
         valign = "bottom",
         halign = "right",
         )
+    
+    if VERSION_ADDITIONAL:
+        #print("Add text",repr(VERSION_ADDITIONAL))
+        PIL_Helper.AddText(
+            image = image,
+            text = VERSION_ADDITIONAL,
+            font = fonts["CopyrightTop"],
+            fill = color,
+            anchor = Anchors["CopyrightTop"],
+            valign = "bottom",
+            halign = "right",
+            )
 
 def MakeBlankCard():
     image = PIL_Helper.BlankImage(base_w, base_h)
