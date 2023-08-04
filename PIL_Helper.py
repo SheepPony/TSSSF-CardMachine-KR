@@ -175,8 +175,17 @@ def AddText(image, text, font, fill=(0,0,0), anchor=(0,0),
 
     return total_text_size
 
+# A4 Page
+PAGE_WIDTH_MILLIIMETERS=210
+PAGE_HEIGHT_MILLIMETERS=297
+
+PAGE_WIDTH_INCHES=PAGE_WIDTH_MILLIIMETERS/25.4
+PAGE_HEIGHT_INCHES=PAGE_HEIGHT_MILLIMETERS/25.4
+
+PAGE_RATIO=PAGE_WIDTH_INCHES/PAGE_HEIGHT_INCHES
+
 def BuildPage(card_list, grid_width, grid_height, filename,
-              cut_line_width=3, page_ratio=8.5/11.0, h_margin=100):
+              cut_line_width=3, page_ratio=PAGE_RATIO, h_margin=100):
     '''
     Adds cards, in order, to a grid defined by grid_width, grid_height.
     It then adds a border to the grid, making sure to preserve the
@@ -205,8 +214,8 @@ def BuildPage(card_list, grid_width, grid_height, filename,
         # bg.save(filename)
     # Create a paper image the exact size of an 8.5x11 paper
     # to paste the card images onto
-    paper_width = int(8.5*300)  # 8.5 inches times 300 dpi
-    paper_height = int(11*300)  # 11 inches times 300 dpi
+    paper_width = int(PAGE_WIDTH_INCHES*300)  # 8.5 inches times 300 dpi
+    paper_height = int(PAGE_HEIGHT_INCHES*300)  # 11 inches times 300 dpi
     paper_image = Image.new("RGB", (paper_width, paper_height), (255, 255, 255))
     w,h = bg.size
     # TODO Add code that shrinks the bg if it's bigger than any dimension
