@@ -4,14 +4,14 @@ def unwhite(s):
 	return s.replace(" ","").replace("\n","").replace("\t","").replace(".","").replace("-","").replace('"','').lower()
 	
 def unescape(s):
-	return s.replace("\\n","\n")
+	return s.replace("\\n","\n").replace("\'","'")
 def escape(s):
 	return repr(s)[1:-1]
 
 
 with open("TranslationData/mapping_v2.csv","r",encoding="utf-8") as f:
 	csv_rows=list(csv.reader(f))
-csv_rows=csv_rows[2:]
+csv_rows=csv_rows[1:]
 
 keyword_mappings=dict()
 for row in csv_rows:
@@ -110,8 +110,10 @@ def parse_csv_v2(filepath,*,parse_end=None):
 translation_data=dict()
 #translation_data.update(parse_csv("TranslationData/pony.csv"))
 translation_data.update(parse_csv_v2("TranslationData/pony_v2.csv"))
-translation_data.update(parse_csv("TranslationData/goal.csv",is_goal=True))
+translation_data.update(parse_csv_v2("TranslationData/goal_v2.csv"))
 translation_data.update(parse_csv_v2("TranslationData/ship_v2.csv",parse_end=60))
+translation_data.update(parse_csv("TranslationData/ECship.csv",is_goal=False))
+translation_data.update(parse_csv("TranslationData/ECgoal.csv",is_goal=True))
 
 TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range(9)
 
@@ -132,6 +134,7 @@ def translate(ponE,ponK):
 			translated_lines.append(orig_line)
 			print("Copying line",repr(orig_line))
 			continue
+		kind=orig_tags[0]
 		title=orig_tags[3]
 		keyword=orig_tags[4]
 		body=orig_tags[5]
@@ -147,7 +150,11 @@ def translate(ponE,ponK):
 			if "keyword" in dat:
 				keyword=escape(dat["keyword"])
 			if "body" in dat:
+				
 				body=apply_mappings(escape(dat["body"]))
+				if kind.lower()=="goal":
+					body="다음 상황에서 이 목표가 달성됩니다:\\n"+body
+					
 			if "flavor" in dat:
 				flavor=escape(dat["flavor"])
 			
