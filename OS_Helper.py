@@ -17,6 +17,12 @@ def CleanDirectory(path=".", mkdir="workspace", rmstring="*.*"):
         Delete(os.path.join(dir_path, rmstring))
     return dir_path
 
+def AssertDirectory(path=".", mkdir="workspace"):
+    dir_path = os.path.join(path, mkdir)
+    assert os.path.exists(dir_path)
+    assert os.path.isdir(dir_path)
+    return dir_path
+
 def BuildPage(card_list, page_num, page_width, page_height,
               workspace_path):
     PIL_Helper.BuildPage(card_list, page_width, page_height,

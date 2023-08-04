@@ -5,7 +5,7 @@ Master Game Gen
 import os, glob
 import PIL_Helper
 import argparse
-from OS_Helper import Delete, CleanDirectory, BuildPage, BuildBack
+from OS_Helper import Delete, CleanDirectory, BuildPage, BuildBack, AssertDirectory
 from sys import exit
 
 #TSSSF Migration TODO:
@@ -13,7 +13,8 @@ from sys import exit
 #individual artist naming
 #.pon files have symbols like {ALICORN} and so on.
 
-def main(folder, filepath):
+def main(folder, filepath, 
+         create_pdf=True, clean_workspace=True, page_start_num=0):
     '''
     @param folder: The base game folder where we'll be working.
         E.g. TSSSF, BaBOC
@@ -36,7 +37,10 @@ def main(folder, filepath):
     module.CardSet = card_set
 
     # Create workspace for card images
-    workspace_path = CleanDirectory(path=folder, mkdir="workspace", rmstring="*.*")
+    if clean_workspace:
+        workspace_path = CleanDirectory(path=folder, mkdir="workspace", rmstring="*.*")
+    else:
+        workspace_path= AssertDirectory(path=folder, mkdir="workspace")
 
     # Create image directories
     bleed_path = CleanDirectory(path=folder+"/"+card_set, mkdir="bleed-images",rmstring="*.*")
@@ -63,7 +67,7 @@ def main(folder, filepath):
     # Make pages
     card_list = []
     back_list = []
-    page_num = 0
+    page_num = page_start_num
     for line in cardlines:
         card_list.append(module.BuildCard(line))
         back_list.append(module.BuildBack(line))
@@ -91,12 +95,15 @@ def main(folder, filepath):
 
     #Build Vassal
     module.CompileVassalModule()
-
-    print("\nCreating PDF...")
-    os.system(r'convert "{}/page_*.png" "{}/{}.pdf"'.format(workspace_path, output_folder, card_set))
-    print("\nCreating PDF of backs...")
-    os.system(r'convert "{}/backs_*.png" "{}/backs_{}.pdf"'.format(workspace_path, output_folder, card_set))
-    print("Done!")
+    
+    if create_pdf:
+        print("\nCreating PDF...")
+        os.system(r'convert "{}/page_*.png" "{}/{}.pdf"'.format(workspace_path, output_folder, card_set))
+        print("\nCreating PDF of backs...")
+        os.system(r'convert "{}/backs_*.png" "{}/backs_{}.pdf"'.format(workspace_path, output_folder, card_set))
+        print("Done!")
+    
+    return page_num
 
 if __name__ == '__main__':
     # To run this script, you have two options:
@@ -118,8 +125,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     #main(args.basedir, args.set_file)
-    main('TSSSF', 'Core 1.1.5/cardsKR.pon')
-    #main('TSSSF', 'Extra Credit 1.0.1/cardsKR.pon')
+    pn=main('TSSSF', 'Core 1.1.5/cardsKR.pon',
+        create_pdf=False)
+    pn=main('TSSSF', 'Extra Credit 1.0.1/cardsKR.pon',
+        clean_workspace=False, page_start_num=pn)
     #main('TSSSF', 'Korean Ponies 0.0.1/cards.pon')
     #main('TSSSF', '2014 Con Exclusives/cards.pon')
     #main('TSSSF', 'BABScon 2015/cards.pon')
