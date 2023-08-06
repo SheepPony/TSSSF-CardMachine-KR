@@ -81,6 +81,26 @@ fpJeju=FontParams(
     titleWidthThresh=     14,
     offsetTitleLeading=  +8)
 
+# JEJU-Noto
+font_index=1
+fpJeNo=FontParams(
+    fTitle=       (FontsPath+"CookieRun Bold.ttf", 48),
+    fTitleSmall=  (FontsPath+"CookieRun Bold.ttf", 38),
+    fBody=        (FontsPath+"JejuGothicTSSSF.ttf",        32),
+    fBodySmall=   (FontsPath+"JejuGothicTSSSF.ttf",        32),
+    fBodySmaller= (FontsPath+"JejuGothicTSSSF.ttf",        28),
+    fBar=         (FontsPath+"JejuGothicTSSSF.ttf",        35),
+    fBarSmall=    (FontsPath+"JejuGothicTSSSF.ttf",        32),
+    fFlavor=      (FontsPath+"NotoSerifCJK-SemiBold.ttc",  22,font_index),
+    fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
+    #fCopyrightTop=   (FontsPath+"NotoSansCJK-Medium.ttc", 18,font_index),
+    fCopyrightTop=   (FontsPath+"JejuGothicTSSSF.ttf", 18),
+    offsetBarY=          +6,
+    offsetBodyLeading=   +5,
+    offsetFlavorLeading=  -2,
+    titleWidthThresh=     14,
+    offsetTitleLeading=  +8)
+
 # NOTO
 font_index=1
 fpNoto=FontParams(
@@ -103,7 +123,7 @@ fpNoto=FontParams(
 if LANGMODE=="EN":
     fontparam=fpOriginal#fpJeju
 elif LANGMODE=="KR":
-    fontparam=fpJeju
+    fontparam=fpJeNo
 else:
     0/0
 
