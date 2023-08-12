@@ -3,12 +3,16 @@ import PIL_Helper
 import os.path
 
 LANGMODE="KR"
+IS_TRANSLATION=False
+ARTIST = "SheepPony" #"Pixel Prism"
+
 assert LANGMODE in ("EN","KR")
 
 TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range(9)
 DIRECTORY = "TSSSF"
-ARTIST = "Pixel Prism"
-if LANGMODE=="KR":
+#ARTIST = "Pixel Prism"
+
+if LANGMODE=="KR" and IS_TRANSLATION:
     VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁 v0.02'
 else:
     VERSION_ADDITIONAL=''
@@ -277,7 +281,8 @@ Expansions = {
 #    "Patreon": PIL_Helper.LoadImage(ResourcePath+"/symbol-Patreon.png"),
 #    "Gameshow": PIL_Helper.LoadImage(ResourcePath+"/symbol-gameshow.png"),
 #    "BABScon": PIL_Helper.LoadImage(ResourcePath+"/symbol-BABScon.png")
-    "Korean": PIL_Helper.LoadImage(ResourcePath+"/symbol-www.png")
+    "Korean": PIL_Helper.LoadImage(ResourcePath+"/symbol-korean.png"),
+    "SP1off": PIL_Helper.LoadImage(ResourcePath+"/symbol-sp.png"),
     }
 
 ColorDict={
