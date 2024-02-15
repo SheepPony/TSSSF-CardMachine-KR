@@ -125,12 +125,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     #main(args.basedir, args.set_file)
-    #pn=main('TSSSF', 'Core 1.1.5/cardsKR.pon',
-    #    create_pdf=False)
-    #pn=main('TSSSF', 'Extra Credit 1.0.1/cardsKR.pon',
-    #    clean_workspace=False, page_start_num=pn)
+    pn=main('TSSSF', 'Core 1.1.5/cardsKR.pon',
+        create_pdf=False)
+    pn=main('TSSSF', 'Extra Credit 1.0.1/cardsKR.pon',
+        clean_workspace=False, page_start_num=pn)
     #main('TSSSF', 'Korean Ponies 0.0.1/cards.pon')
-    main('TSSSF', 'SheepPony One-Offs/cardsKR.pon')
+    #main('TSSSF', 'SheepPony One-Offs/cardsKR.pon')
     #main('TSSSF', 'SheepPony One-Offs/cards.pon')
     
     #main('TSSSF', '2014 Con Exclusives/cards.pon')

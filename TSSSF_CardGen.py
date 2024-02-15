@@ -3,8 +3,9 @@ import PIL_Helper
 import os.path
 
 LANGMODE="KR"
-IS_TRANSLATION=False
-ARTIST = "SheepPony" #"Pixel Prism"
+IS_TRANSLATION= True #False
+ARTIST = "Pixel Prism" #"SheepPony"
+COPYRIGHT_TEXT_OVERRIDE=None#"Character by TastiMelon. TSSSF by Horrible People Games. Art by SheepPony."
 
 assert LANGMODE in ("EN","KR")
 
@@ -16,6 +17,10 @@ if LANGMODE=="KR" and IS_TRANSLATION:
     VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁 v0.02'
 else:
     VERSION_ADDITIONAL=''
+    
+def text_preprocess(s):
+    s=s.replace("…","...") # Replace Ellipsis unicode (U+2026) with three periods.
+    return s
 
 LegacySymbolMode = False
 PAGE_WIDTH = 3
@@ -138,7 +143,8 @@ VassalImagesPath = os.path.join(VassalWorkspacePath, "images")
 VASSAL_SCALE=(260,359)
 
 VassalCard = [0]
-ART_WIDTH = 600
+ART_WIDTH = 601
+ART_HEIGHT = 444
 base_w = 889
 base_h = 1215
 base_w_center = base_w/2
@@ -175,9 +181,9 @@ fonts = {
 
 Anchors = {
     "Blank": (base_w_center, 300),
-    "PonyArt": (173, 225),
-    "ShipArt": (173, 226),
-    "GoalArt": (174, 224),
+    "PonyArt": (172, 224),
+    "ShipArt": (172, 224),#(173, 226),
+    "GoalArt": (172, 224),#(174, 224),
     "Symbol1": (58+50,56+63),
     "Symbol2": (58+50,160+63),
     "LoneSymbol": (108,153),
@@ -210,9 +216,12 @@ if LANGMODE=="KR":
     def trykor(fp):
         fn,ex=os.path.splitext(fp)
         kfp=fn+"-kor"+ex
+        #print("Finding:",kfp)
         if os.path.exists(kfp):
+            #print("  Found")
             return kfp
         else:
+            #print("  404!")
             return fp
 else:
     trykor=lambda fp:fp
@@ -386,6 +395,7 @@ def SaveCard(filepath, image_to_save):
 
 def BuildCard(linein):
     tags = linein.strip('\n').strip('\r').replace(r'\n', '\n').split('`')
+    tags=[text_preprocess(i) for i in tags]
     try:
         im = PickCardFunc(tags[TYPE], tags)
         if len(tags) >= 2:
@@ -443,17 +453,28 @@ def GetFrame(card_type):
     return Frames[card_type].copy()
 
 def AddCardArt(image, filename, anchor):
+    
     if filename == "NOART":
         return
-    if os.path.exists(os.path.join(CardPath, filename)):
-        art = PIL_Helper.LoadImage(os.path.join(CardPath, filename))
+    
+    filepath=os.path.join(CardPath, filename)
+    filepath=trykor(filepath)
+    if os.path.exists(filepath):
+        art = PIL_Helper.LoadImage(filepath)
     else:
         art = random.choice(ArtMissing)
     # Find desired height of image based on width of 600 px
     w, h = art.size
-    h = int((float(ART_WIDTH)/w)*h)
+    #h = int((float(ART_WIDTH)/w)*h)
+    art_aspect=w/h
+    card_aspect=ART_WIDTH/ART_HEIGHT
+    if abs(art_aspect-card_aspect)>0.01:
+        print("Art aspect ratio is off by more than 1%!")
+        print("Art:",w,h,art_aspect)
+        print("Card:",ART_WIDTH,ART_HEIGHT,card_aspect)
+        0/0
     # Resize image to fit in frame
-    art = PIL_Helper.ResizeImage(art, (ART_WIDTH,h))
+    art = PIL_Helper.ResizeImage(art, (ART_WIDTH,ART_HEIGHT))
     image.paste(art, anchor)
 
 def AddSymbols(image, symbols, card_type=""):
@@ -581,11 +602,16 @@ def CopyrightText(tags, image, color):
     if len(tags)-1 >= CLIENT:
         card_set += " " + str(tags[CLIENT])
     
-        
+    
     text = "{}; TSSSF by Horrible People Games. Art by {}.".format(
         card_set,
         ARTIST
         )
+    
+    if COPYRIGHT_TEXT_OVERRIDE:
+        text=COPYRIGHT_TEXT_OVERRIDE
+        
+    
     PIL_Helper.AddText(
         image = image,
         text = text,

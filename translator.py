@@ -6,7 +6,8 @@ def unwhite(s):
 def unescape(s):
 	return s.replace("\\n","\n").replace("\'","'")
 def escape(s):
-	return repr(s)[1:-1]
+	#return repr(s)[1:-1]
+	return s.replace("\n","\\n")
 
 
 with open("TranslationData/mapping_v2.csv","r",encoding="utf-8") as f:
