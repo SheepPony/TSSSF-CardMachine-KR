@@ -1,6 +1,7 @@
 from PIL import Image, ImageFont, ImageDraw, ImageOps
 import os, glob
 from math import ceil
+import config
 
 def BuildFont(fontname, fontsize,index=0):
     f= ImageFont.truetype(fontname, fontsize,index=index)
@@ -176,13 +177,15 @@ def AddText(image, text, font, fill=(0,0,0), anchor=(0,0),
     return total_text_size
 
 # A4 Page
-PAGE_WIDTH_MILLIIMETERS=210
-PAGE_HEIGHT_MILLIMETERS=297
+PAGE_WIDTH_MILLIIMETERS=config.page_width
+PAGE_HEIGHT_MILLIMETERS=config.page_height
 
 PAGE_WIDTH_INCHES=PAGE_WIDTH_MILLIIMETERS/25.4
 PAGE_HEIGHT_INCHES=PAGE_HEIGHT_MILLIMETERS/25.4
 
 PAGE_RATIO=PAGE_WIDTH_INCHES/PAGE_HEIGHT_INCHES
+DPI=300 # Dots per Inch
+DPM= DPI/25.4 # Dots per Millimeters
 
 def BuildPage(card_list, grid_width, grid_height, filename,
               cut_line_width=3, page_ratio=PAGE_RATIO, h_margin=100):
@@ -194,34 +197,48 @@ def BuildPage(card_list, grid_width, grid_height, filename,
     '''
     # Create card grid based on size of the first card
     w,h = card_list[0].size
-    bg = Image.new("RGB", (w*grid_width, h*grid_height))
+    cardgrid = Image.new("RGB", (
+        (w+cut_line_width)*grid_width-cut_line_width, 
+        (h+cut_line_width)*grid_height-cut_line_width))
+    
     # Add cards to the grid, top down, left to right
     for y in range(grid_height):
         for x in range(grid_width):
             card = card_list.pop(0)
             coords = (x*(w+cut_line_width),
                       y*(h+cut_line_width))
-            bg.paste(card, coords)
-    # If there's a margin defined, add extra whitespace around the page
-    # if h_margin > 0:
-    #     w,h = bg.size
-    #     w_margin = (((h_margin*2)+h)*page_ratio-w)/2.0
-    #     w_margin = round(w_margin)
-    #     page = Image.new("RGB", (int(w+w_margin*2), int(h+h_margin*2)), (255, 255, 255))
-    #     page.paste(bg, (w_margin,h_margin))
-    #     page.save(filename)
-    # else:
-        # bg.save(filename)
-    # Create a paper image the exact size of an 8.5x11 paper
-    # to paste the card images onto
-    paper_width = int(PAGE_WIDTH_INCHES*300)  # 8.5 inches times 300 dpi
-    paper_height = int(PAGE_HEIGHT_INCHES*300)  # 11 inches times 300 dpi
-    paper_image = Image.new("RGB", (paper_width, paper_height), (255, 255, 255))
-    w,h = bg.size
-    # TODO Add code that shrinks the bg if it's bigger than any dimension
-    # of the Paper image
-    paper_image.paste(bg, ((paper_width - w)//2, (paper_height - h)//2))
-    paper_image.save(filename, dpi=(300, 300))
+            cardgrid.paste(card, coords)
+
+    paper_size_px_full=(
+        round(PAGE_WIDTH_MILLIIMETERS*DPM),
+        round(PAGE_HEIGHT_MILLIMETERS*DPM))
+    paper_image = Image.new("RGB", paper_size_px_full, (255, 255, 255))
+    
+    paper_size_px_inborder=(
+        round((PAGE_WIDTH_MILLIIMETERS-config.page_margins*2)*DPM),
+        round((PAGE_HEIGHT_MILLIMETERS-config.page_margins*2)*DPM))
+    
+    
+    if paper_size_px_inborder[0] < cardgrid.width or paper_size_px_inborder[1] < cardgrid.height:
+        # Resize needed!
+        if config.shrink_cards_to_fit_page:
+            orig_img=cardgrid
+            cardgrid=ResizeImageToFitInside(cardgrid,paper_size_px_inborder)
+            rsz_factor=cardgrid.width/orig_img.width
+            print(F"Resizing card image!! Factor {rsz_factor*100:.1f}%")
+            
+        else:
+            print("Card grid too big!")
+            print("Paper@300dpi: {paper_image.width}x{paper_image.height}")
+            print("In-Margin: {paper_size_px_inborder[0]}x{paper_size_px_inborder[1]}")
+            print("Card Grid: {cardgrid.width}x{cardgrid.height}")
+            0/0
+    paper_image.paste(cardgrid, 
+        (round((paper_image.width - cardgrid.width)/2), 
+         round((paper_image.height - cardgrid.height)/2)))
+    
+    
+    paper_image.save(filename, dpi=(DPI, DPI))
 
 def BlankImage(w, h, color=(255,255,255), image_type="RGBA"):
     return Image.new(image_type, (w, h), color=color)
@@ -238,9 +255,65 @@ def LoadImage(filepath, fallback="blank.png"):
 def ResizeImage(image, size, method=Image.Resampling.BICUBIC):
     return image.resize(size, method)
 
+def ResizeImageToFitInside(image,size,method=Image.Resampling.BICUBIC):
+    resize_ratio_w=size[0]/image.width
+    resize_ratio_h=size[1]/image.height
+    resize_ratio=min(resize_ratio_h,resize_ratio_w)
+    target_size=(
+        round(image.width*resize_ratio),
+        round(image.height*resize_ratio))
+    return image.resize(target_size,method)
+
 def DrawRect(image, x, y, width, height, color):
     draw = ImageDraw.Draw(image)
     draw.rectangle((x, y, width, height), fill=color)
+    
+def AddCutLine(
+        image,
+        margin_px=60,outer_margin=15,
+        line_length=35,line_width_px=3,
+        line_color=(255,60,60)):
+    draw = ImageDraw.Draw(image)
+    
+    for v in ("T","B"): # Vertical Alignment: Top/Bottom
+        for h in ("L","R"): # Horizontal Alignment: Left/Right
+            for d in ("V","H"): # Direction: Vertical/Horizontal
+                
+                if d=="V":
+                    if v=="T":
+                        ytop=outer_margin
+                        ybtm=line_length
+                    elif v=="B":
+                        ybtm=image.height-outer_margin
+                        ytop=image.height-line_length
+                    
+                    if h=="L":
+                        xright=margin_px
+                        xleft=margin_px-line_width_px
+                    elif h=="R":
+                        xleft=image.width-margin_px
+                        xright=image.width-margin_px+line_width_px
+                elif d=="H":
+                    if v=="T":
+                        ybtm=margin_px
+                        ytop=margin_px-line_width_px
+                    elif v=="B":
+                        ytop=image.height-margin_px
+                        ybtm=image.height-margin_px+line_width_px
+                        
+                    if h=="L":
+                        xleft=outer_margin
+                        xright=line_length
+                    elif h=="R":
+                        xleft=image.width-line_length
+                        xright=image.width-outer_margin
+                
+                # Top-Left H
+                draw.rectangle(
+                    (xleft,ytop,
+                     xright,ybtm),
+                    fill=line_color)
+    return image
 
 if __name__ == "__main__":
     image = Image.open("y.png")

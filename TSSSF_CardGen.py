@@ -1,6 +1,7 @@
 import os, glob, shutil, traceback, random
 import PIL_Helper
 import os.path
+import config
 
 LANGMODE="KR"
 IS_TRANSLATION= True #False
@@ -330,18 +331,36 @@ RulesDict={
     "{play from discard}": "You may choose to play the top card on the Pony discard pile with this Ship, rather than use a Pony card from your hand.",
     }
 
-backs = {"START": PIL_Helper.LoadImage(ResourcePath + "Back-Start.png"),
-         "Pony": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
-         "Goal": PIL_Helper.LoadImage(ResourcePath + "Back-Goals.png"),
-         "Ship": PIL_Helper.LoadImage(ResourcePath + "Back-Ships.png"),
-         "Card": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
-         "Shipwrecker": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
-         "BLANK": PIL_Helper.LoadImage(ResourcePath + "Blank - Intentionally Left Blank.png"),
-         "Rules1": PIL_Helper.LoadImage(CardPath + "Rules2.png"),
-         "Rules3": PIL_Helper.LoadImage(CardPath + "Rules4.png"),
-         "Rules5": PIL_Helper.LoadImage(CardPath + "Rules6.png"),
-         "TestSubject": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
-         "Warning": PIL_Helper.LoadImage(CardPath + "Card - Contact.png")
+
+if config.page_bleed:
+    backs = {
+        "START": PIL_Helper.LoadImage(ResourcePath + "BLEED-Start-Back.png"),
+        "Pony": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
+        "Goal": PIL_Helper.LoadImage(ResourcePath + "BLEED-Goal-Back.png"),
+        "Ship": PIL_Helper.LoadImage(ResourcePath + "BLEED-Ship-Back.png"),
+        "Card": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
+        "Shipwrecker": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
+        "BLANK": PIL_Helper.LoadImage(ResourcePath + "Blank - Intentionally Left Blank.png"),
+        "Rules1": PIL_Helper.LoadImage(CardPath + "Rules2.png"),
+        "Rules3": PIL_Helper.LoadImage(CardPath + "Rules4.png"),
+        "Rules5": PIL_Helper.LoadImage(CardPath + "Rules6.png"),
+        "TestSubject": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
+        "Warning": PIL_Helper.LoadImage(CardPath + "Card - Contact.png")
+        }
+else:
+    backs = {
+        "START": PIL_Helper.LoadImage(ResourcePath + "Back-Start.png"),
+        "Pony": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
+        "Goal": PIL_Helper.LoadImage(ResourcePath + "Back-Goals.png"),
+        "Ship": PIL_Helper.LoadImage(ResourcePath + "Back-Ships.png"),
+        "Card": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
+        "Shipwrecker": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
+        "BLANK": PIL_Helper.LoadImage(ResourcePath + "Blank - Intentionally Left Blank.png"),
+        "Rules1": PIL_Helper.LoadImage(CardPath + "Rules2.png"),
+        "Rules3": PIL_Helper.LoadImage(CardPath + "Rules4.png"),
+        "Rules5": PIL_Helper.LoadImage(CardPath + "Rules6.png"),
+        "TestSubject": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
+        "Warning": PIL_Helper.LoadImage(CardPath + "Card - Contact.png")
         }
 
 def FixFileName(tagin):
@@ -414,9 +433,14 @@ def BuildCard(linein):
     except Exception as e:
         print("Warning, Bad Card: {0}".format(tags))
         traceback.print_exc()
-        im_crop = MakeBlankCard().crop(croprect)
-    #im.show()  # TEST
-    return im_crop
+        im=MakeBlankCard()
+        im_crop = im.crop(croprect)
+    
+    if config.page_bleed:
+        im=PIL_Helper.AddCutLine(im)
+        return im
+    else:
+        return im_crop
 
 def BuildBack(linein):
     tags = linein.strip('\n').replace(r'\n', '\n').split('`')

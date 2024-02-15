@@ -80,6 +80,7 @@ def main(folder, filepath,
             BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
             card_list = []
             back_list = []
+    
 
     # If there are leftover cards, fill in the remaining
     # card slots with blanks and gen the last page
