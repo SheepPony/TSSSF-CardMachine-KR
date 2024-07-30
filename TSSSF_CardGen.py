@@ -15,7 +15,7 @@ DIRECTORY = "TSSSF"
 #ARTIST = "Pixel Prism"
 
 if LANGMODE=="KR" and IS_TRANSLATION:
-    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁 v0.02'
+    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁vDEV[2024-02-16]'
 else:
     VERSION_ADDITIONAL=''
     
@@ -240,6 +240,8 @@ Frames = {
     "TestSubject": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - OverlayTest Subject Cheerilee.png")
     }
 
+
+
 Symbols = {
     "male": PIL_Helper.LoadImage(ResourcePath+"/Symbol-male.png"),
     "female": PIL_Helper.LoadImage(ResourcePath+"/Symbol-Female.png"),
@@ -363,6 +365,31 @@ else:
         "Warning": PIL_Helper.LoadImage(CardPath + "Card - Contact.png")
         }
 
+
+# Sanity check - all cards should have the same dimensions
+if config.enforce_card_dimensions:
+    for k in Frames:
+        v=Frames[k]
+        wdiff=abs(v.width - config.card_px_width)
+        hdiff=abs(v.height - config.card_px_height)
+        if max(wdiff,hdiff)>config.card_dimension_mismatch_leeway:
+            print("Card dimension mismatch for Frame",k)
+            print(F"{v.width}x{v.height} != {config.card_px_width}x{config.card_px_height}")
+            0/0
+    if config.enforce_front_back_dimension_match:
+        for k in backs:
+            v=backs[k]
+            if abs(v.height-config.card_px_height) > config.card_dimension_mismatch_leeway:
+                if config.resize_back_to_match_front:
+                    print("Resizing back frame",k)
+                    print(F"{v.width}x{v.height} --> {config.card_px_width}x{config.card_px_height}")
+                    backs[k]=PIL_Helper.ResizeImage(v,(config.card_px_width,config.card_px_height))
+                else:
+                    print("Back dimension mismatch for Frame",k)
+                    print(F"{v.width}x{v.height} != {config.card_px_width}x{config.card_px_height}")
+                    0/0
+        
+
 def FixFileName(tagin):
     FileName = tagin.replace("\n", "")
     invalid_chars = [",", "?", '"', ":"]
@@ -437,15 +464,31 @@ def BuildCard(linein):
         im_crop = im.crop(croprect)
     
     if config.page_bleed:
-        im=PIL_Helper.AddCutLine(im)
+        cutline_color=(255,60,60)
+        if tags[TYPE]=="START":
+            cutline_color=(255,60,60)
+        elif tags[TYPE]=="Ship":
+            cutline_color=(0,0,0)
+        im=PIL_Helper.AddCutLine(im,line_color=cutline_color)
+        
         return im
     else:
         return im_crop
 
 def BuildBack(linein):
     tags = linein.strip('\n').replace(r'\n', '\n').split('`')
-    #print("Back type: " + tags[TYPE])
-    return backs[tags[TYPE]]
+    
+    im=backs[tags[TYPE]]
+    
+    if config.page_bleed:
+        cutline_color=(255,60,60)
+        if tags[TYPE]=="START":
+            cutline_color=(255,60,60)
+        elif tags[TYPE]=="Ship":
+            cutline_color=(0,0,0)
+        im=PIL_Helper.AddCutLine(im,line_color=cutline_color)
+    
+    return im
   
 def PickCardFunc(card_type, tags):
     if tags[TYPE] == "START":

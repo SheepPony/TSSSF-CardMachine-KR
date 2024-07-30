@@ -7,6 +7,7 @@ import PIL_Helper
 import argparse
 from OS_Helper import Delete, CleanDirectory, BuildPage, BuildBack, AssertDirectory
 from sys import exit
+import subprocess
 
 #TSSSF Migration TODO:
 #automagickally create vassal module :D
@@ -84,6 +85,7 @@ def main(folder, filepath,
 
     # If there are leftover cards, fill in the remaining
     # card slots with blanks and gen the last page
+    page_numbers=[]
     if len(card_list) > 0:
         # Fill in the missing slots with blanks
         while len(card_list) < module.TOTAL_CARDS:
@@ -93,7 +95,8 @@ def main(folder, filepath,
         print("Building Page {}...".format(page_num))
         BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
         BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
-
+        page_numbers.append(page_num)
+        
     #Build Vassal
     module.CompileVassalModule()
     
@@ -102,6 +105,14 @@ def main(folder, filepath,
         os.system(r'convert "{}/page_*.png" "{}/{}.pdf"'.format(workspace_path, output_folder, card_set))
         print("\nCreating PDF of backs...")
         os.system(r'convert "{}/backs_*.png" "{}/backs_{}.pdf"'.format(workspace_path, output_folder, card_set))
+        print("\nCreating Combined PDF...")
+        args=["convert"]
+        for pn in range(1,page_num+1):
+            args.append(workspace_path+F"/page_{pn:03d}.png")
+            args.append(workspace_path+F"/backs_{pn:03d}.png")
+        args.append(output_folder+"/combined_"+card_set+".pdf")
+        print(" ".join(args))
+        subprocess.run(args,check=True)
         print("Done!")
     
     return page_num

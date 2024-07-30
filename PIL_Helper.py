@@ -270,8 +270,8 @@ def DrawRect(image, x, y, width, height, color):
     
 def AddCutLine(
         image,
-        margin_px=60,outer_margin=15,
-        line_length=35,line_width_px=3,
+        margin_px=50,outer_margin=10,
+        line_length=30,line_width_px=3,
         line_color=(255,60,60)):
     draw = ImageDraw.Draw(image)
     
