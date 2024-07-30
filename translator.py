@@ -1,7 +1,7 @@
 import csv
 
 def unwhite(s):
-	return s.replace(" ","").replace("\n","").replace("\t","").replace(".","").replace("-","").replace('"','').lower()
+	return s.replace(" ","").replace("\n","").replace("\t","").replace("…","").replace(".","").replace("-","").replace('"','').lower()
 	
 def unescape(s):
 	return s.replace("\\n","\n").replace("\'","'")
@@ -89,7 +89,7 @@ def parse_csv(filepath,is_goal=False):
 	print(F"{filepath} parsed (V1): {len(res)} entries")
 	return res
 	
-def parse_csv_v2(filepath,*,parse_end=None):
+def parse_csv_v2(filepath,*,parse_end=None,prune_empty=False):
 	res=dict()
 	with open(filepath,"r",encoding="utf-8") as f:
 		csv_rows=list(csv.reader(f))
@@ -99,6 +99,12 @@ def parse_csv_v2(filepath,*,parse_end=None):
 	csv_rows=csv_rows[1:]
 	for row in csv_rows:
 		key=unwhite(row[1]) # EN Name
+		if prune_empty:
+			if not row[6].strip():
+				print("Skipping empty row:")
+				print("   ",filepath)
+				print("   ",key)
+				continue
 		dat={
 			"name":row[6],
 			"keyword":row[7],
@@ -112,9 +118,11 @@ translation_data=dict()
 #translation_data.update(parse_csv("TranslationData/pony.csv"))
 translation_data.update(parse_csv_v2("TranslationData/pony_v2.csv"))
 translation_data.update(parse_csv_v2("TranslationData/goal_v2.csv"))
-translation_data.update(parse_csv_v2("TranslationData/ship_v2.csv",parse_end=60))
-translation_data.update(parse_csv("TranslationData/ECship.csv",is_goal=False))
-translation_data.update(parse_csv("TranslationData/ECgoal.csv",is_goal=True))
+translation_data.update(parse_csv_v2("TranslationData/ship_v2.csv"))
+#translation_data.update(parse_csv("TranslationData/ECship.csv",is_goal=False))
+#translation_data.update(parse_csv("TranslationData/ECgoal.csv",is_goal=True))
+translation_data.update(parse_csv_v2("TranslationData/ECgoal_v2.csv"))#,prune_empty=True))
+translation_data.update(parse_csv_v2("TranslationData/ECship_v2.csv"))#,prune_empty=True))
 
 TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range(9)
 
