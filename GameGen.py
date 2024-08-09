@@ -46,6 +46,8 @@ def main(folder, filepath,
     # Create image directories
     bleed_path = CleanDirectory(path=folder+"/"+card_set, mkdir="bleed-images",rmstring="*.*")
     module.BleedsPath = bleed_path
+    bleedback_path = CleanDirectory(path=folder+"/"+card_set, mkdir="bleed-backs",rmstring="*.*")
+    module.BleedBackPath = bleedback_path
     cropped_path = CleanDirectory(path=folder+"/"+card_set, mkdir="cropped-images",rmstring="*.*")
     module.CropPath = cropped_path
     vassal_path = CleanDirectory(path=folder+"/"+card_set, mkdir="vassal-images",rmstring="*.*")
@@ -69,14 +71,17 @@ def main(folder, filepath,
     card_list = []
     back_list = []
     page_num = page_start_num
+    card_num=0
     for line in cardlines:
-        card_list.append(module.BuildCard(line))
-        back_list.append(module.BuildBack(line))
+        card_num+=1
+        print(F"\r{filepath:>32s} > #{card_num:03d}\r",end='',flush=True)
+        card_list.append(module.BuildCard(line,card_num))
+        back_list.append(module.BuildBack(line,card_num))
         # If the card_list is big enough to make a page
         # do that now, and set the card list to empty again
         if len(card_list) >= module.TOTAL_CARDS:
             page_num += 1
-            print("Building Page {}...".format(page_num))
+            #print("Building Page {}...".format(page_num))
             BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
             BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
             card_list = []
@@ -92,7 +97,7 @@ def main(folder, filepath,
             card_list.append(module.BuildCard("BLANK"))
             back_list.append(module.BuildCard("BLANK"))
         page_num += 1
-        print("Building Page {}...".format(page_num))
+        #print("Building Page {}...".format(page_num))
         BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
         BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
         page_numbers.append(page_num)
@@ -111,9 +116,9 @@ def main(folder, filepath,
             args.append(workspace_path+F"/page_{pn:03d}.png")
             args.append(workspace_path+F"/backs_{pn:03d}.png")
         args.append(output_folder+"/combined_"+card_set+".pdf")
-        print(" ".join(args))
+        #print(" ".join(args))
         subprocess.run(args,check=True)
-        print("Done!")
+    
     
     return page_num
 
@@ -161,3 +166,5 @@ if __name__ == '__main__':
     #main('TSSSF', 'Ponyville University 1.0.2/cards.pon')
     #main('TSSSF', 'Thank You/cards.pon')
     #main('BaBOC', 'BaBOC 0.1.0/deck.cards')
+    
+    print("Done!")

@@ -36,6 +36,7 @@ CardPath = DIRECTORY+"/Card-Art/"
 ResourcePath = DIRECTORY+"/resources/"
 FontsPath = DIRECTORY+"/fonts/"
 BleedsPath = DIRECTORY+"/bleed-images/" # will be set by GameGen.py
+BleedBackPath = DIRECTORY+"/bleed-backs/" # will be set by GameGen.py
 CropPath = DIRECTORY+"/cropped-images/" # will be set by GameGen.py
 VassalPath = DIRECTORY+"/vassal-images/" # will be set by GameGen.py
 
@@ -440,7 +441,7 @@ def SaveCard(filepath, image_to_save):
             filepath = "{}_{:>03}{}".format(basepath, i, extension)
     image_to_save.save(filepath, dpi=(300, 300))
 
-def BuildCard(linein):
+def BuildCard(linein,cardno=0):
     tags = linein.strip('\n').strip('\r').replace(r'\n', '\n').split('`')
     tags=[text_preprocess(i) for i in tags]
     try:
@@ -450,6 +451,7 @@ def BuildCard(linein):
                 filename = FixFileName(tags[0]+"_"+tags[1])
             else:
                 filename = FixFileName(tags[0]+"_"+tags[3])
+            filename=F"{cardno:03d}_"+filename
             SaveCard(os.path.join(BleedsPath, filename), im)
             im_crop=im.crop(croprect)
             SaveCard(os.path.join(CropPath, filename), im_crop)
@@ -476,13 +478,29 @@ def BuildCard(linein):
     else:
         return im_crop
 
-def BuildBack(linein):
-    tags = linein.strip('\n').replace(r'\n', '\n').split('`')
-    
-    if tags[TYPE] == "Credits":
-        im=MakeCreditsCard(False)
-    else:
-        im=backs[tags[TYPE]]
+def BuildBack(linein,cardno=0):
+    tags = linein.strip('\n').strip('\r').replace(r'\n', '\n').split('`')
+    tags=[text_preprocess(i) for i in tags]
+    try:
+        if tags[TYPE] == "Credits":
+            im=MakeCreditsCard(False)
+        else:
+            im=backs[tags[TYPE]]
+        if len(tags) >= 2:
+            if len(tags) == 2:
+                filename = FixFileName(tags[0]+"_"+tags[1])
+            else:
+                filename = FixFileName(tags[0]+"_"+tags[3])
+            filename=F"{cardno:03d}_"+filename
+            SaveCard(os.path.join(BleedBackPath, filename), im)
+        else:
+            im_crop=im.crop(croprect)
+        #MakeVassalCard(im_cropped)
+    except Exception as e:
+        print("Warning, Bad Card: {0}".format(tags))
+        traceback.print_exc()
+        im=MakeBlankCard()
+        im_crop = im.crop(croprect)
     
     if config.page_bleed:
         cutline_color=(255,60,60)
@@ -580,7 +598,7 @@ def TitleText(image, text, color):
     if len(text)>TitleWidthThresholds[0]:
         anchor = Anchors["TitleSmall"]
         font = fonts["TitleSmall"]
-    print(repr(text))
+    #print(repr(text))
     PIL_Helper.AddText(
         image = image,
         text = text,
