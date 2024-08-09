@@ -15,7 +15,7 @@ DIRECTORY = "TSSSF"
 #ARTIST = "Pixel Prism"
 
 if LANGMODE=="KR" and IS_TRANSLATION:
-    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁vDEV[2024-07-30]'
+    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁vDEV[2024-08-09]'
 else:
     VERSION_ADDITIONAL=''
     
@@ -312,6 +312,7 @@ ColorDict={
     "Ship bar text": (234, 220, 236),
     "Ship flavor": (137, 22, 47),
     "Copyright": (255, 255, 255),
+    "Copyright-Special": (30, 30, 30),
     "Blankfill": (200,200,200)
     }
 
@@ -478,7 +479,10 @@ def BuildCard(linein):
 def BuildBack(linein):
     tags = linein.strip('\n').replace(r'\n', '\n').split('`')
     
-    im=backs[tags[TYPE]]
+    if tags[TYPE] == "Credits":
+        im=MakeCreditsCard(False)
+    else:
+        im=backs[tags[TYPE]]
     
     if config.page_bleed:
         cutline_color=(255,60,60)
@@ -501,8 +505,8 @@ def PickCardFunc(card_type, tags):
         return MakeGoalCard(tags)
     elif tags[TYPE] == "BLANK":
         return MakeBlankCard()
-    elif tags[TYPE] == "Warning":
-        return MakeSpecialCard("Warning")
+    elif tags[TYPE] == "Credits":
+        return MakeCreditsCard(True)
     elif tags[TYPE] == "Rules1":
         return MakeSpecialCard("Rules1")
     elif tags[TYPE] == "Rules3":
@@ -663,7 +667,7 @@ def AddExpansion(image, expansion):
     if expansion_symbol:
         image.paste(expansion_symbol, Anchors["Expansion"], expansion_symbol)
 
-def CopyrightText(tags, image, color):
+def CopyrightText(tags, image, color, do_bottom=True, do_top=True):
     card_set = CardSet.replace('_',' ')
     #print tags[CLIENT], repr(tags)
     if len(tags)-1 >= CLIENT:
@@ -678,18 +682,18 @@ def CopyrightText(tags, image, color):
     if COPYRIGHT_TEXT_OVERRIDE:
         text=COPYRIGHT_TEXT_OVERRIDE
         
+    if do_bottom:
+        PIL_Helper.AddText(
+            image = image,
+            text = text,
+            font = fonts["Copyright"],
+            fill = color,
+            anchor = Anchors["Copyright"],
+            valign = "bottom",
+            halign = "right",
+            )
     
-    PIL_Helper.AddText(
-        image = image,
-        text = text,
-        font = fonts["Copyright"],
-        fill = color,
-        anchor = Anchors["Copyright"],
-        valign = "bottom",
-        halign = "right",
-        )
-    
-    if VERSION_ADDITIONAL:
+    if do_top and VERSION_ADDITIONAL:
         #print("Add text",repr(VERSION_ADDITIONAL))
         PIL_Helper.AddText(
             image = image,
@@ -769,9 +773,18 @@ def MakeGoalCard(tags):
 def MakeSpecialCard(picture):
     print(repr(picture))
     image= GetFrame(picture)
-    CopyrightText([], image, ColorDict["Copyright"])
+    CopyrightText([], image, ColorDict["Copyright-Special"],do_bottom=False)
     return image
 
+def MakeCreditsCard(front):
+    if front:
+        image=PIL_Helper.LoadImage(ResourcePath + "CC-f.png")
+    else:
+        image=PIL_Helper.LoadImage(ResourcePath + "CC-b.png")
+    #image= GetFrame(picture)
+    CopyrightText([], image, ColorDict["Copyright-Special"],do_bottom=False)
+    return image
+    
 def InitVassalModule():
     pass
 
