@@ -102,11 +102,11 @@ def main(folder, filepath,
     
     if create_pdf:
         print("\nCreating PDF...")
-        os.system(r'convert "{}/page_*.png" "{}/{}.pdf"'.format(workspace_path, output_folder, card_set))
+        os.system(r'magick "{}/page_*.png" "{}/{}.pdf"'.format(workspace_path, output_folder, card_set))
         print("\nCreating PDF of backs...")
-        os.system(r'convert "{}/backs_*.png" "{}/backs_{}.pdf"'.format(workspace_path, output_folder, card_set))
+        os.system(r'magick "{}/backs_*.png" "{}/backs_{}.pdf"'.format(workspace_path, output_folder, card_set))
         print("\nCreating Combined PDF...")
-        args=["convert"]
+        args=["magick"]
         for pn in range(1,page_num+1):
             args.append(workspace_path+F"/page_{pn:03d}.png")
             args.append(workspace_path+F"/backs_{pn:03d}.png")
