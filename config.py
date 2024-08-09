@@ -1,6 +1,7 @@
 
 # Page Setup: All units millimeters
 shrink_cards_to_fit_page=True
+warn_card_shrink = False
 page_margins=10
 
 # A4 Paper

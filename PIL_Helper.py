@@ -225,8 +225,8 @@ def BuildPage(card_list, grid_width, grid_height, filename,
             orig_img=cardgrid
             cardgrid=ResizeImageToFitInside(cardgrid,paper_size_px_inborder)
             rsz_factor=cardgrid.width/orig_img.width
-            print(F"Resizing card image!! Factor {rsz_factor*100:.1f}%")
-            
+            if config.warn_card_shrink:
+                print(F"Resizing card image!! Factor {rsz_factor*100:.1f}%")
         else:
             print("Card grid too big!")
             print("Paper@300dpi: {paper_image.width}x{paper_image.height}")
