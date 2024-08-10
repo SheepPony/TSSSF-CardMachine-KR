@@ -109,7 +109,7 @@ def parse_csv_v2(filepath,*,parse_end=None,prune_empty=False):
 			"name":row[6],
 			"keyword":row[7],
 			"body":row[8],
-			"flavor":row[9]+" -"+'\u00A0'+row[10]} #insert NBSP
+			"flavor":row[9]+"\uEB44 - "+row[10]} #insert NBSP
 		res[key]=dat
 	print(F"{filepath} parsed (V2): {len(res)} entries")
 	return res

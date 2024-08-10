@@ -52,6 +52,47 @@ def WrapText(text, font, max_width):
             temp += w + " "
     return wrapped_text + temp.strip(' ')
 
+del WrapText
+def WrapText(text, font, max_width):
+    '''
+    Re-implementation of the above function.
+    Still kinda funky.
+    
+    If U+EB44 (private use area) is present in the string,
+    the string will be split at that point if a line break is needed.
+    '''
+    lines=[] # finished lines.
+    buf=text # text not added yet
+    current_line='' #currently composing line
+    
+    while buf:
+        # Add one character.
+        current_line=current_line+buf[0]
+        buf=buf[1:]
+        
+        # Check if we went over the limit
+        width, height = font.getsize(current_line)
+        if current_line[-1]=='\n':
+            # If we just added a newline, split here
+            current_line=''
+            lines.append(current_line[:-1])
+        elif width > max_width:
+            # We went over the limit
+            lastline=''
+            nextline=''
+            #print("Splitting...",repr(current_line))
+            if '\uEB44' in current_line: # Try to split at U+EB44
+                #print("Split at U+EB44")
+                lastline,_,nextline = current_line.rpartition('\uEB44')
+            else: # Split at space
+                #print("Split at space")
+                lastline,_,nextline = current_line.rpartition(' ')
+            lines.append(lastline)
+            current_line=nextline
+    lines.append(current_line)
+    
+    return "\n".join(lines).replace("\uEB44","")
+
 def GetTextBlockSize(text, font, max_width=-1, leading_offset=0):
     if max_width > -1:
         wrapped_text = WrapText(text, font, max_width)
