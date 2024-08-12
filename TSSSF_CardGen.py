@@ -86,7 +86,7 @@ fpJeju=FontParams(
     fFlavor=      (FontsPath+"JejuMyeongjo.ttf",      24),
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     fCopyrightTop=   (FontsPath+"JejuGothicTSSSF.ttf", 18),
-    offsetBarY=          +6,
+    offsetBarY=          +7,
     offsetBodyLeading=   +5,
     offsetFlavorLeading=  0,
     titleWidthThresh=     14,
@@ -106,7 +106,7 @@ fpJeNo=FontParams(
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     #fCopyrightTop=   (FontsPath+"NotoSansCJK-Medium.ttc", 18,font_index),
     fCopyrightTop=   (FontsPath+"JejuGothicTSSSF.ttf", 18),
-    offsetBarY=          +6,
+    offsetBarY=          +7,
     offsetBodyLeading=   +5,
     offsetFlavorLeading=  -2,
     titleWidthThresh=     14,
@@ -791,7 +791,7 @@ def MakeGoalCard(tags):
 def MakeSpecialCard(picture):
     print(repr(picture))
     image= GetFrame(picture)
-    CopyrightText([], image, ColorDict["Copyright-Special"],do_bottom=False)
+    CopyrightText([], image, ColorDict["Copyright"])
     return image
 
 def MakeCreditsCard(front):
