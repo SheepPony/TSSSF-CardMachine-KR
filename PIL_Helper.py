@@ -74,8 +74,8 @@ def WrapText(text, font, max_width):
         width, height = font.getsize(current_line)
         if current_line[-1]=='\n':
             # If we just added a newline, split here
-            current_line=''
             lines.append(current_line[:-1])
+            current_line=''
         elif width > max_width:
             # We went over the limit
             lastline=''
