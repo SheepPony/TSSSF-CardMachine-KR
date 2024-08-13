@@ -15,7 +15,7 @@ DIRECTORY = "TSSSF"
 #ARTIST = "Pixel Prism"
 
 if LANGMODE=="KR" and IS_TRANSLATION:
-    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁v0.9'
+    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁v0.9.1'
 else:
     VERSION_ADDITIONAL=''
     
@@ -346,7 +346,7 @@ RulesDict={
     }
 
 
-if config.page_bleed:
+if not config.backs_precrop:
     backs = {
         "START": PIL_Helper.LoadImage(ResourcePath + "BLEED-Start-Back.png"),
         "Pony": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
@@ -476,7 +476,7 @@ def BuildCard(linein,cardno=0):
         im=MakeBlankCard()
         im_crop = im.crop(croprect)
     
-    if config.page_bleed:
+    if config.page_cutlines:
         cutline_color=(255,60,60)
         if tags[TYPE]=="START":
             cutline_color=(255,60,60)
@@ -512,7 +512,7 @@ def BuildBack(linein,cardno=0):
         im=MakeBlankCard()
         im_crop = im.crop(croprect)
     
-    if config.page_bleed:
+    if config.page_cutlines:
         cutline_color=(255,60,60)
         if tags[TYPE]=="START":
             cutline_color=(255,60,60)

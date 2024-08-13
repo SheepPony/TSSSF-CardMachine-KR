@@ -13,7 +13,9 @@ page_height=297
 #page_height=420
 #page_height,page_width=page_width,page_height # Horizontal
 
-page_bleed=False
+
+page_cutlines = False
+backs_precrop = False
 
 enforce_card_dimensions=True
 card_px_width=889
