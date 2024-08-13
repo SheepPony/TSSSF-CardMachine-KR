@@ -88,7 +88,8 @@ def parse_csv(filepath,is_goal=False):
 		i+=1
 	print(F"{filepath} parsed (V1): {len(res)} entries")
 	return res
-	
+
+ficname_map=dict()
 def parse_csv_v2(filepath,*,parse_end=None,prune_empty=False):
 	res=dict()
 	with open(filepath,"r",encoding="utf-8") as f:
@@ -98,18 +99,38 @@ def parse_csv_v2(filepath,*,parse_end=None,prune_empty=False):
 		csv_rows=csv_rows[:parse_end]
 	csv_rows=csv_rows[1:]
 	for row in csv_rows:
+		
 		key=unwhite(row[1]) # EN Name
+		
 		if prune_empty:
 			if not row[6].strip():
 				print("Skipping empty row:")
 				print("   ",filepath)
 				print("   ",key)
 				continue
+		
+		ficnameE=row[5]
+		ficnameK=row[10]
+		if ficnameE in ficname_map:
+			if ficname_map[ficnameE] != ficnameK:
+				print("Ficname mismatch:",ficnameE)
+				print(ficnameK,"!=",ficname_map[ficnameE])
+				0/0
+		ficname_map[ficnameE] = ficnameK
+		
+		flavorK=row[9]
+		
+		if ficnameK:
+			# U+EB44 (custom): preferred line break
+			flavor_composite=flavorK+"\uEB44 - "+ficnameK 
+		else:
+			flavor_composite=flavorK
+		
 		dat={
 			"name":row[6],
 			"keyword":row[7],
 			"body":row[8],
-			"flavor":row[9]+"\uEB44 - "+row[10]} #insert NBSP
+			"flavor":flavor_composite} 
 		res[key]=dat
 	print(F"{filepath} parsed (V2): {len(res)} entries")
 	return res
