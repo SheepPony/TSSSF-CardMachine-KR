@@ -15,7 +15,7 @@ DIRECTORY = "TSSSF"
 #ARTIST = "Pixel Prism"
 
 if LANGMODE=="KR" and IS_TRANSLATION:
-    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁vDEV[2024-08-09]'
+    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁v0.9'
 else:
     VERSION_ADDITIONAL=''
     
@@ -51,6 +51,8 @@ FontParams=collections.namedtuple(
         "fCopyright",
         "fCopyrightTop",
         "offsetBarY",
+        "offsetTitleTwolineY",
+        "offsetTitleSmallY",
         "offsetBodyLeading",
         "offsetFlavorLeading",
         "titleWidthThresh",
@@ -69,6 +71,8 @@ fpOriginal=FontParams(
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf",     18),
     fCopyrightTop=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     offsetBarY=           0,
+    offsetTitleTwolineY=  0,
+    offsetTitleSmallY=    0,
     offsetBodyLeading=    0,
     offsetFlavorLeading=  0,
     titleWidthThresh=     50,
@@ -86,7 +90,9 @@ fpJeju=FontParams(
     fFlavor=      (FontsPath+"JejuMyeongjo.ttf",      24),
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     fCopyrightTop=   (FontsPath+"JejuGothicTSSSF.ttf", 18),
-    offsetBarY=          +7,
+    offsetBarY=          +8,
+    offsetTitleTwolineY=  0,
+    offsetTitleSmallY=   +5,
     offsetBodyLeading=   +5,
     offsetFlavorLeading=  0,
     titleWidthThresh=     14,
@@ -106,7 +112,9 @@ fpJeNo=FontParams(
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     #fCopyrightTop=   (FontsPath+"NotoSansCJK-Medium.ttc", 18,font_index),
     fCopyrightTop=   (FontsPath+"JejuGothicTSSSF.ttf", 18),
-    offsetBarY=          +7,
+    offsetBarY=          +8,
+    offsetTitleTwolineY=  0,
+    offsetTitleSmallY=   +5,
     offsetBodyLeading=   +5,
     offsetFlavorLeading=  -2,
     titleWidthThresh=     14,
@@ -126,6 +134,8 @@ fpNoto=FontParams(
     fCopyright=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     fCopyrightTop=   (FontsPath+"TSSSFCabin-Medium.ttf", 18),
     offsetBarY=          -4,
+    offsetTitleTwolineY=  0,
+    offsetTitleSmallY=    0,
     offsetBodyLeading=   -4,
     offsetFlavorLeading= -2,
     titleWidthThresh=     16,
@@ -192,8 +202,8 @@ Anchors = {
     "TimelineSymbol": (58+50,535+63),
     "GoalSymbol2": (108,613),
     "Title": (-65-50, 160),
-    "TitleTwoLine": (-65-50, 159),
-    "TitleSmall": (-65-50, 157),
+    "TitleTwoLine": (-65-50, 159+fontparam.offsetTitleTwolineY),
+    "TitleSmall": (-65-50, 157+fontparam.offsetTitleSmallY),
     "Bar": (-68-50, 598+67+fontparam.offsetBarY),
     "Body": (base_w_center, 735),
     "BodyShiftedUp": (base_w_center, 730),
@@ -594,8 +604,9 @@ def TitleText(image, text, color):
     leading = -9
     if text.count('\n') > 0:
         anchor = Anchors["TitleTwoLine"]
+        font = fonts["TitleSmall"]
         leading = -15
-    if len(text)>TitleWidthThresholds[0]:
+    elif len(text)>TitleWidthThresholds[0]:
         anchor = Anchors["TitleSmall"]
         font = fonts["TitleSmall"]
     #print(repr(text))
