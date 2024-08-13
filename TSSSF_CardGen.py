@@ -496,6 +496,14 @@ def BuildBack(linein,cardno=0):
             im=MakeCreditsCard(False)
         else:
             im=backs[tags[TYPE]]
+            
+        if config.make_backs_unique:
+            im.putpixel(
+                (0,0),
+                (random.randint(0,255),
+                 random.randint(0,255),
+                 random.randint(0,255)))
+        
         if len(tags) >= 2:
             if len(tags) == 2:
                 filename = FixFileName(tags[0]+"_"+tags[1])

@@ -17,6 +17,11 @@ page_height=297
 page_cutlines = False
 backs_precrop = False
 
+# PrinterStudio will merge images if they are the same.
+# This will put a single randomly-colored pixel
+# so it won't be automatically merged.
+make_backs_unique = True
+
 enforce_card_dimensions=True
 card_px_width=889
 card_px_height=1214
