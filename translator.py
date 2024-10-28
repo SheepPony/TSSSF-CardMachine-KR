@@ -1,19 +1,23 @@
 import csv
 
+# Some string manipulation functions
 def unwhite(s):
 	return s.replace(" ","").replace("\n","").replace("\t","").replace("…","").replace(".","").replace("-","").replace('"','').lower()
-	
 def unescape(s):
 	return s.replace("\\n","\n").replace("\'","'")
 def escape(s):
-	#return repr(s)[1:-1]
 	return s.replace("\n","\\n")
 
-
+## Keyword Mappings
+# Read CSV
+# CSV Columns: NUMBER KEYWORD EN_TEXT KR_TEXT
 with open("TranslationData/mapping_v2.csv","r",encoding="utf-8") as f:
 	csv_rows=list(csv.reader(f))
+
+# Skip header
 csv_rows=csv_rows[1:]
 
+# Load CSV into a dict
 keyword_mappings=dict()
 for row in csv_rows:
 	k=row[1]
@@ -27,90 +31,33 @@ def apply_mappings(s):
 		s=s.replace(k,v)
 	return s
 
-def parse_csv(filepath,is_goal=False):
-	res=dict()
-	with open(filepath,"r",encoding="utf-8") as f:
-		csv_rows=list(csv.reader(f))
 
-	csv_rows=csv_rows[2:]
-	i=0
-	while i<len(csv_rows):
-		if csv_rows[i][1].strip(): # Number column NOT empty!
-			key=unwhite(csv_rows[i][2])
-			dat=dict()
-			if is_goal:
-				tagkeys=("name","body","flavor")
-			else:
-				tagkeys=("name","keyword","body","flavor")
-			
-			taglines=[]
-			for j in range(4):
-				try:
-					row=csv_rows[i+j]
-				except IndexError:
-					break
-					
-				cell=row[3].strip()
-				if (j!=0) and (row[1].strip()): # next entry!
-					break
-				if cell:
-					
-					taglines.append(cell)
-			if not taglines[-1]:
-				del taglines[-1]
-				
-			tagkeys={
-				1:("name",),
-				2:("name","flavor"),
-				3:("name","body","flavor"),
-				4:("name","keyword","body","flavor")}[len(taglines)]
-			for j in range(len(taglines)):
-				dat[tagkeys[j]]=taglines[j]
-			'''
-			for j in range(len(tagkeys)):
-				tagkey=tagkeys[j]
-				try:
-					row=csv_rows[i+j]
-				except IndexError:
-					break
-					
-				cell=row[3]
-				#print(row,tagkey,cell)
-				if (j!=0) and (row[1].strip()): # next entry!
-					break
-				if cell:
-					dat[tagkey]=cell
-			'''
-			#print("Add Transl. Entry:",key)
-			if key in res:
-				print("DUPLICATE ENTRY!",key)
-			res[key]=dat
-		i+=1
-	print(F"{filepath} parsed (V1): {len(res)} entries")
-	return res
-
+## Translation Database Parse
 ficname_map=dict()
-def parse_csv_v2(filepath,*,parse_end=None,prune_empty=False):
+def parse_csv_v2(filepath):
+	'''
+	Parses Translation data CSV.
+	CSV Rows: EN_NAME EN_KEYWORD EN_TEXT EN_FLAVOR EN_FICNAME 
+	          KR_NAME KR_KEYWORD KR_TEXT KR_FLAVOR KR_FICNAME
+	Result is a dict, mapping the card name into the translation data.
+	'''
+	
+	# Read CSV
 	res=dict()
 	with open(filepath,"r",encoding="utf-8") as f:
 		csv_rows=list(csv.reader(f))
 	
-	if parse_end:
-		csv_rows=csv_rows[:parse_end]
+	# Skip header
 	csv_rows=csv_rows[1:]
+	
 	for row in csv_rows:
 		
 		key=unwhite(row[1]) # EN Name
 		
-		if prune_empty:
-			if not row[6].strip():
-				print("Skipping empty row:")
-				print("   ",filepath)
-				print("   ",key)
-				continue
-		
 		ficnameE=row[5]
 		ficnameK=row[10]
+		
+		# Check if ficname is consistently translated
 		if ficnameE in ficname_map:
 			if ficname_map[ficnameE] != ficnameK:
 				print("Ficname mismatch:",ficnameE)
@@ -121,7 +68,8 @@ def parse_csv_v2(filepath,*,parse_end=None,prune_empty=False):
 		flavorK=row[9]
 		
 		if ficnameK:
-			# U+EB44 (custom): preferred line break
+			# Insert line break hint
+			# I'm using U+EB44, a Private Use Area code point.
 			flavor_composite=flavorK+"\uEB44 - "+ficnameK 
 		else:
 			flavor_composite=flavorK
@@ -132,35 +80,41 @@ def parse_csv_v2(filepath,*,parse_end=None,prune_empty=False):
 			"body":row[8],
 			"flavor":flavor_composite} 
 		res[key]=dat
+	
 	print(F"{filepath} parsed (V2): {len(res)} entries")
 	return res
 
+# Gather all translation data
 translation_data=dict()
-#translation_data.update(parse_csv("TranslationData/pony.csv"))
 translation_data.update(parse_csv_v2("TranslationData/pony_v2.csv"))
 translation_data.update(parse_csv_v2("TranslationData/goal_v2.csv"))
 translation_data.update(parse_csv_v2("TranslationData/ship_v2.csv"))
-#translation_data.update(parse_csv("TranslationData/ECship.csv",is_goal=False))
-#translation_data.update(parse_csv("TranslationData/ECgoal.csv",is_goal=True))
-translation_data.update(parse_csv_v2("TranslationData/ECgoal_v2.csv"))#,prune_empty=True))
-translation_data.update(parse_csv_v2("TranslationData/ECship_v2.csv"))#,prune_empty=True))
+translation_data.update(parse_csv_v2("TranslationData/ECgoal_v2.csv"))
+translation_data.update(parse_csv_v2("TranslationData/ECship_v2.csv"))
 
-TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range(9)
 
 def translate(ponE,ponK):
-	print(ponE,"to",ponK)
+	'''
+	Actually translate the .pon files,
+	given the filepaths.
+	'''
+	print("Translating",ponE,"to",ponK)
+	
+	# Read original .pon
 	with open(ponE,"r",encoding="utf-8") as f:
 		orig_pon=f.read()
-
 	orig_lines=orig_pon.split("\n")
-	translated_lines=[]
-
+	
+	
 	print("Translating...")
+	translated_lines=[]
+	
 	for orig_line in orig_lines:
+		# Parse line
 		orig_tags=orig_line.split('`')
-		#print(orig_tags)
-		
 		if len(orig_tags)<6:
+			# If line is too short, it's probably a special card.
+			# Copy the line as-is.
 			translated_lines.append(orig_line)
 			print("Copying line",repr(orig_line))
 			continue
@@ -170,37 +124,39 @@ def translate(ponE,ponK):
 		body=orig_tags[5]
 		flavor=orig_tags[6]
 		
+		# The key for the translation data is the card's title without whitespaces.
+		# THIS ASSUMES ALL CARD NAMES ARE UNIQUE!
 		key=unwhite(unescape(title))
-		#print("Finding",key)
+		
 		if key in translation_data:
 			
+			# Apply translations
 			dat=translation_data[key]
 			if "name" in dat:
 				title=escape(dat["name"])
 			if "keyword" in dat:
 				keyword=escape(dat["keyword"])
 			if "body" in dat:
-				
+				# Need to add the goal text
 				body=apply_mappings(escape(dat["body"]))
 				if kind.lower()=="goal":
 					body="다음 상황에서 이 목표가 달성됩니다:\\n"+body
-					
 			if "flavor" in dat:
 				flavor=escape(dat["flavor"])
-			
-			#print("  Trans data found:",dat)
 		else:
 			print(" ### No trans data found!",key)
 		
+		# For other data, copy as-is.
 		translated_tags=orig_tags[:3]+[title,keyword,body,flavor]+orig_tags[7:]
-		#print(translated_tags)
 		
 		translated_lines.append('`'.join(translated_tags))
+	
 	print(F"Translated {len(translated_lines)} entries.")
-
-
+	
+	# Write out the translated .pon file.
 	with open(ponK,"w",encoding="utf-8") as f:
 		f.write("\n".join(translated_lines))
 
+# All the translation targets.
 translate("TSSSF/Core 1.1.5/cards.pon","TSSSF/Core 1.1.5/cardsKR.pon")
 translate("TSSSF/Extra Credit 1.0.1/cards.pon","TSSSF/Extra Credit 1.0.1/cardsKR.pon")
