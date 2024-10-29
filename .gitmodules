@@ -1,0 +1,9 @@
+[submodule "CardDefinitions"]
+	path = CardDefinitions
+	url = https://github.com/SheepPony/TSSSF-CardDef-KR.git
+[submodule "Resources"]
+	path = Resources
+	url = https://github.com/SheepPony/TSSSF-Resources-KR.git
+[submodule "CardArt"]
+	path = CardArt
+	url = https://github.com/SheepPony/TSSSF-CardArt-KR.git
