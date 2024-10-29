@@ -1,18 +1,18 @@
 # TSSSF-CardMachine (KR)
-Modified by SheepPony
-Originally by Horrible People Productions
+Modified by SheepPony  
+Originally by Horrible People Productions  
 version: OH GOD EVERYTHING IS STILL TERRIBLE
 
 ## What is this?
-This is a fork of `Card Machine` by `Horrible People Games`, extensively modified to be able to handle Korean text. You can run this to generate 
+This is a fork of `Card Machine` by `Horrible People Games`, extensively modified to be able to handle Korean text. You can use this to generate the Korean translated versions of Core and Extra Credit decks.
 
 ## Installing
 This code was created and used under Linux. I have not tested on Windows or Mac, but in theory this code should be fairly cross-platform.
 
-Please note that some required files are under a submodule. Please use the command below to clone this repo, or else the submodules may not get pulled.
+Please note that some required files are under a submodule. Please use the command below to clone this repo, or else the submodules may not get pulled.  
 `git clone --recurse-submodules https://github.com/SheepPony/TSSSF-CardMachine-KR.git`
 
-This code depends on the `pillow` Python package.
+This code depends on the `pillow` Python package.  
 `ImageMagick` is required for PDF generation.
 
 
