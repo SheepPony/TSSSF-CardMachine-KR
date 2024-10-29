@@ -158,5 +158,7 @@ def translate(ponE,ponK):
 		f.write("\n".join(translated_lines))
 
 # All the translation targets.
-translate("TSSSF/Core 1.1.5/cards.pon","TSSSF/Core 1.1.5/cardsKR.pon")
-translate("TSSSF/Extra Credit 1.0.1/cards.pon","TSSSF/Extra Credit 1.0.1/cardsKR.pon")
+translate("CardDefinitions/Core_1.1.5.pon",
+		  "CardDefinitions/Core_1.1.5_KR.pon")
+translate("CardDefinitions/Extra-Credit_1.0.1.pon",
+		  "CardDefinitions/Extra-Credit_1.0.1_KR.pon")

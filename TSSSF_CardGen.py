@@ -11,11 +11,10 @@ COPYRIGHT_TEXT_OVERRIDE=None#"Character by TastiMelon. TSSSF by Horrible People 
 assert LANGMODE in ("EN","KR")
 
 TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range(9)
-DIRECTORY = "TSSSF"
 #ARTIST = "Pixel Prism"
 
 if LANGMODE=="KR" and IS_TRANSLATION:
-    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁v0.9.1'
+    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁vDEV[2024-10-29a]'
 else:
     VERSION_ADDITIONAL=''
     
@@ -29,16 +28,17 @@ PAGE_HEIGHT = 3
 TOTAL_CARDS = PAGE_WIDTH*PAGE_HEIGHT
 
 
-workspace_path = os.path.dirname("workspace")
-card_set = os.path.dirname("deck.cards")
 CardSet = os.path.dirname("deck.cards") # will be set by GameGen.py
-CardPath = DIRECTORY+"/Card-Art/"
-ResourcePath = DIRECTORY+"/resources/"
-FontsPath = DIRECTORY+"/fonts/"
-BleedsPath = DIRECTORY+"/bleed-images/" # will be set by GameGen.py
-BleedBackPath = DIRECTORY+"/bleed-backs/" # will be set by GameGen.py
-CropPath = DIRECTORY+"/cropped-images/" # will be set by GameGen.py
-VassalPath = DIRECTORY+"/vassal-images/" # will be set by GameGen.py
+
+CardPath = "CardArt/"
+CardTexturePath = "Resources/CardTextures/"
+SymbolsPath = "Resources/Symbols/"
+FontsPath = "Resources/Fonts/"
+
+BleedsPath = None # will be set by GameGen.py
+BleedBackPath = None # will be set by GameGen.py
+CropPath = None # will be set by GameGen.py
+VassalPath = None # will be set by GameGen.py
 
 
 import collections
@@ -149,8 +149,8 @@ else:
     0/0
 
 
-VassalTemplatesPath = DIRECTORY+"/vassal templates/"
-VassalWorkspacePath = DIRECTORY+"/vassal workspace/"
+VassalTemplatesPath = "vassal templates"
+VassalWorkspacePath = "vassal workspace"
 VassalImagesPath = os.path.join(VassalWorkspacePath, "images")
 VASSAL_SCALE=(260,359)
 
@@ -188,9 +188,6 @@ fonts = {
 }
 
 
-
-
-
 Anchors = {
     "Blank": (base_w_center, 300),
     "PonyArt": (172, 224),
@@ -214,13 +211,13 @@ Anchors = {
 }
 
 ArtMissing = [
-    PIL_Helper.LoadImage(CardPath+"/artmissing01.png"),
-    PIL_Helper.LoadImage(CardPath+"/artmissing02.png"),
-    PIL_Helper.LoadImage(CardPath+"/artmissing03.png"),
-    PIL_Helper.LoadImage(CardPath+"/artmissing04.png"),
-    PIL_Helper.LoadImage(CardPath+"/artmissing05.png"),
-    PIL_Helper.LoadImage(CardPath+"/artmissing06.png"),
-    PIL_Helper.LoadImage(CardPath+"/artmissing07.png"),
+    PIL_Helper.LoadImage(os.path.join(CardPath,"artmissing01.png")),
+    PIL_Helper.LoadImage(os.path.join(CardPath,"artmissing02.png")),
+    PIL_Helper.LoadImage(os.path.join(CardPath,"artmissing03.png")),
+    PIL_Helper.LoadImage(os.path.join(CardPath,"artmissing04.png")),
+    PIL_Helper.LoadImage(os.path.join(CardPath,"artmissing05.png")),
+    PIL_Helper.LoadImage(os.path.join(CardPath,"artmissing06.png")),
+    PIL_Helper.LoadImage(os.path.join(CardPath,"artmissing07.png")),
     ]
 
 
@@ -239,73 +236,101 @@ else:
     trykor=lambda fp:fp
     
 Frames = {
-    "START": PIL_Helper.LoadImage(trykor(ResourcePath+"/BLEED-Blank-Start-bleed.png")),
-    "Warning": PIL_Helper.LoadImage(CardPath+"/Warning_.png"),
-    "Pony": PIL_Helper.LoadImage(trykor(ResourcePath+"/BLEED-Blank-Pony-bleed.png")),
-    "Ship": PIL_Helper.LoadImage(trykor(ResourcePath+"/BLEED-Blank-Ship-bleed.png")),
-    "Rules1": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules1.png"),
-    "Rules3": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules3.png"),
-    "Rules5": PIL_Helper.LoadImage(CardPath+"/BLEED_Rules5.png"),
-    "Goal": PIL_Helper.LoadImage(trykor(ResourcePath+"/BLEED-Blank-Goal-bleed.png")),
-    "Derpy": PIL_Helper.LoadImage(trykor(CardPath+"/BLEED_Card - Derpy Hooves.png")),
-    "TestSubject": PIL_Helper.LoadImage(CardPath+"/BLEED_Card - OverlayTest Subject Cheerilee.png")
+    "START": PIL_Helper.LoadImage(trykor(
+        os.path.join(CardTexturePath,"BLEED-Blank-Start-bleed.png"))),
+    "Warning": PIL_Helper.LoadImage(
+        os.path.join(CardTexturePath,"Warning_.png")),
+    "Pony": PIL_Helper.LoadImage(trykor(
+        os.path.join(CardTexturePath,"BLEED-Blank-Pony-bleed.png"))),
+    "Ship": PIL_Helper.LoadImage(trykor(
+        os.path.join(CardTexturePath,"BLEED-Blank-Ship-bleed.png"))),
+    "Rules1": PIL_Helper.LoadImage(
+        os.path.join(CardTexturePath,"BLEED_Rules1.png")),
+    "Rules3": PIL_Helper.LoadImage(
+        os.path.join(CardTexturePath,"BLEED_Rules3.png")),
+    "Rules5": PIL_Helper.LoadImage(
+        os.path.join(CardTexturePath,"BLEED_Rules5.png")),
+    "Goal": PIL_Helper.LoadImage(trykor(
+        os.path.join(CardTexturePath,"BLEED-Blank-Goal-bleed.png"))),
+    "Derpy": PIL_Helper.LoadImage(trykor(
+        os.path.join(CardPath,"BLEED_Card - Derpy Hooves.png"))),
+    "TestSubject": PIL_Helper.LoadImage(
+        os.path.join(CardPath,"BLEED_Card - OverlayTest Subject Cheerilee.png"))
     }
 
+creditscard_f=PIL_Helper.LoadImage(
+    os.path.join(CardTexturePath, "CC-f.png"))
+creditscard_b=PIL_Helper.LoadImage(
+    os.path.join(CardTexturePath, "CC-b.png"))
 
 
 Symbols = {
-    "male": PIL_Helper.LoadImage(ResourcePath+"/Symbol-male.png"),
-    "female": PIL_Helper.LoadImage(ResourcePath+"/Symbol-Female.png"),
-    "malefemale": PIL_Helper.LoadImage(ResourcePath+"/Symbol-MaleFemale.png"),
-    "earth pony": PIL_Helper.LoadImage(ResourcePath+"/Symbol-Earth-Pony.png"),
-    "unicorn": PIL_Helper.LoadImage(ResourcePath+"/Symbol-Unicorn.png"),
-    "uniearth": PIL_Helper.LoadImage(ResourcePath+"/symbol-uniearth.png"),
-    "pegasus": PIL_Helper.LoadImage(ResourcePath+"/Symbol-Pegasus.png"),
-    "alicorn": PIL_Helper.LoadImage(ResourcePath+"/Symbol-Alicorn.png"),
-    "changelingearthpony": PIL_Helper.LoadImage(ResourcePath+"/Symbol-ChangelingEarthPony.png"),
-    "changelingunicorn": PIL_Helper.LoadImage(ResourcePath+"/Symbol-ChangelingUnicorn.png"),
-    "changelingpegasus": PIL_Helper.LoadImage(ResourcePath+"/Symbol-ChangelingPegasus.png"),
-    "changelingalicorn": PIL_Helper.LoadImage(ResourcePath+"/Symbol-ChangelingAlicorn.png"),
-    "dystopian": PIL_Helper.LoadImage(ResourcePath+"/symbol-dystopian-future.png"),
-    "ship": PIL_Helper.LoadImage(ResourcePath+"/Symbol-Ship.png"),
-    "goal": PIL_Helper.LoadImage(ResourcePath+"/Symbol-Goal.png"),
-    "0": PIL_Helper.LoadImage(ResourcePath+"/symbol-0.png"),
-    "1": PIL_Helper.LoadImage(ResourcePath+"/symbol-1.png"),
-    "2": PIL_Helper.LoadImage(ResourcePath+"/symbol-2.png"),
-    "3": PIL_Helper.LoadImage(ResourcePath+"/symbol-3.png"),
-    "4": PIL_Helper.LoadImage(ResourcePath+"/symbol-4.png"),
-    "3-4": PIL_Helper.LoadImage(ResourcePath+"/symbol-34.png"),
-    "2-3": PIL_Helper.LoadImage(ResourcePath+"/symbol-23.png")
+    "male": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-male.png")),
+    "female": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-Female.png")),
+    "malefemale": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-MaleFemale.png")),
+    "earth pony": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-Earth-Pony.png")),
+    "unicorn": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-Unicorn.png")),
+    "uniearth": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-uniearth.png")),
+    "pegasus": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-Pegasus.png")),
+    "alicorn": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-Alicorn.png")),
+    "changelingearthpony": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-ChangelingEarthPony.png")),
+    "changelingunicorn": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-ChangelingUnicorn.png")),
+    "changelingpegasus": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-ChangelingPegasus.png")),
+    "changelingalicorn": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-ChangelingAlicorn.png")),
+    "dystopian": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-dystopian-future.png")),
+    "ship": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-Ship.png")),
+    "goal": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"Symbol-Goal.png")),
+    "0": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-0.png")),
+    "1": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-1.png")),
+    "2": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-2.png")),
+    "3": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-3.png")),
+    "4": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-4.png")),
+    "3-4": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-34.png")),
+    "2-3": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-23.png"))
     }
 TIMELINE_SYMBOL_LIST = ["Dystopian"]
 
 Expansions = {
-#    "Everfree14": PIL_Helper.LoadImage(ResourcePath+"/symbol-Everfree14.png"),
-    "Indiegogo": PIL_Helper.LoadImage(ResourcePath+"/symbol-Indiegogo.png"),
-#    "Birthday": PIL_Helper.LoadImage(ResourcePath+"/symbol-birthday.png"),
-#    "Bronycon": PIL_Helper.LoadImage(ResourcePath+"/symbol-Bronycon14.png"),
-#    "Summer": PIL_Helper.LoadImage(ResourcePath+"/symbol-summer-lovin.png"),
-#    "Apricity": PIL_Helper.LoadImage(ResourcePath+"/symbol-apricity.png"),
-#    "BronyCAN": PIL_Helper.LoadImage(ResourcePath+"/symbol-Bronycan14.png"),
-    "Xtra": PIL_Helper.LoadImage(ResourcePath+"/symbol-extracredit.png"),
-#    "Xtra-dark": PIL_Helper.LoadImage(ResourcePath+"/symbol-extracredit-black.png"),
-#    "NMND": PIL_Helper.LoadImage(ResourcePath+"/symbol-nightmarenights.png"),
-#    "Ciderfest": PIL_Helper.LoadImage(ResourcePath+"/symbol-ponyvilleciderfest.png"),
-#    "Adventure": PIL_Helper.LoadImage(ResourcePath+"/symbol-adventure.png"),
-#    "Custom": PIL_Helper.LoadImage(ResourcePath+"/symbol-custom.png"),
-#    "Power": PIL_Helper.LoadImage(ResourcePath+"/symbol-power.png"),
-#    "Multiplicity": PIL_Helper.LoadImage(ResourcePath+"/symbol-multiplicity.png"),
-#    "Canon": PIL_Helper.LoadImage(ResourcePath+"/symbol-canon.png"),
-#    "Dungeon": PIL_Helper.LoadImage(ResourcePath+"/symbol-dungeon.png"),
-#    "50": PIL_Helper.LoadImage(ResourcePath+"/symbol-50.png"),
-#    "2014": PIL_Helper.LoadImage(ResourcePath+"/symbol-2014.png"),
-#    "Hearthswarming": PIL_Helper.LoadImage(ResourcePath+"/symbol-hearthswarming.png"),
-#    "Ponycon 2015": PIL_Helper.LoadImage(ResourcePath+"/symbol-ponynyc.png"),
-#    "Patreon": PIL_Helper.LoadImage(ResourcePath+"/symbol-Patreon.png"),
-#    "Gameshow": PIL_Helper.LoadImage(ResourcePath+"/symbol-gameshow.png"),
-#    "BABScon": PIL_Helper.LoadImage(ResourcePath+"/symbol-BABScon.png")
-    "Korean": PIL_Helper.LoadImage(ResourcePath+"/symbol-korean.png"),
-    "SP1off": PIL_Helper.LoadImage(ResourcePath+"/symbol-sp.png"),
+    "Indiegogo": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-Indiegogo.png")),
+    "Summer": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-summer-lovin.png")),
+    "Xtra": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-extracredit.png")),
+    "Power": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-power.png")),
+    "Multiplicity": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-multiplicity.png")),
+    "Canon": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-canon.png")),
+    "50": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-50.png")),
+    "Korean": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-korean.png")),
+    "SP1off": PIL_Helper.LoadImage(
+        os.path.join(SymbolsPath,"symbol-sp.png")),
     }
 
 ColorDict={
@@ -348,33 +373,57 @@ RulesDict={
 
 if not config.backs_precrop:
     backs = {
-        "START": PIL_Helper.LoadImage(ResourcePath + "BLEED-Start-Back.png"),
-        "Pony": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
-        "Goal": PIL_Helper.LoadImage(ResourcePath + "BLEED-Goal-Back.png"),
-        "Ship": PIL_Helper.LoadImage(ResourcePath + "BLEED-Ship-Back.png"),
-        "Card": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
-        "Shipwrecker": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
-        "BLANK": PIL_Helper.LoadImage(ResourcePath + "Blank - Intentionally Left Blank.png"),
-        "Rules1": PIL_Helper.LoadImage(CardPath + "Rules2.png"),
-        "Rules3": PIL_Helper.LoadImage(CardPath + "Rules4.png"),
-        "Rules5": PIL_Helper.LoadImage(CardPath + "Rules6.png"),
-        "TestSubject": PIL_Helper.LoadImage(ResourcePath + "BLEED-Pony-Back.png"),
-        "Warning": PIL_Helper.LoadImage(CardPath + "Card - Contact.png")
+        "START": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath, "BLEED-Start-Back.png")),
+        "Pony": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"BLEED-Pony-Back.png")),
+        "Goal": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"BLEED-Goal-Back.png")),
+        "Ship": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"BLEED-Ship-Back.png")),
+        "Card": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"BLEED-Pony-Back.png")),
+        "Shipwrecker": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"BLEED-Pony-Back.png")),
+        "BLANK": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Blank - Intentionally Left Blank.png")),
+        "Rules1": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Rules2.png")),
+        "Rules3": PIL_Helper.LoadImage( 
+            os.path.join(CardTexturePath,"Rules4.png")),
+        "Rules5": PIL_Helper.LoadImage(
+             os.path.join(CardTexturePath, "Rules6.png")),
+        "TestSubject": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"BLEED-Pony-Back.png")),
+        "Warning": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Card - Contact.png"))
         }
 else:
     backs = {
-        "START": PIL_Helper.LoadImage(ResourcePath + "Back-Start.png"),
-        "Pony": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
-        "Goal": PIL_Helper.LoadImage(ResourcePath + "Back-Goals.png"),
-        "Ship": PIL_Helper.LoadImage(ResourcePath + "Back-Ships.png"),
-        "Card": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
-        "Shipwrecker": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
-        "BLANK": PIL_Helper.LoadImage(ResourcePath + "Blank - Intentionally Left Blank.png"),
-        "Rules1": PIL_Helper.LoadImage(CardPath + "Rules2.png"),
-        "Rules3": PIL_Helper.LoadImage(CardPath + "Rules4.png"),
-        "Rules5": PIL_Helper.LoadImage(CardPath + "Rules6.png"),
-        "TestSubject": PIL_Helper.LoadImage(ResourcePath + "Back-Main.png"),
-        "Warning": PIL_Helper.LoadImage(CardPath + "Card - Contact.png")
+        "START": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Back-Start.png")),
+        "Pony": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Back-Main.png")),
+        "Goal": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Back-Goals.png")),
+        "Ship": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Back-Ships.png")),
+        "Card": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Back-Main.png")),
+        "Shipwrecker": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Back-Main.png")),
+        "BLANK": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Blank - Intentionally Left Blank.png")),
+        "Rules1": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Rules2.png")),
+        "Rules3": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Rules4.png")),
+        "Rules5": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Rules6.png")),
+        "TestSubject": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Back-Main.png")),
+        "Warning": PIL_Helper.LoadImage(
+            os.path.join(CardTexturePath,"Card - Contact.png"))
         }
 
 
@@ -815,9 +864,9 @@ def MakeSpecialCard(picture):
 
 def MakeCreditsCard(front):
     if front:
-        image=PIL_Helper.LoadImage(ResourcePath + "CC-f.png")
+        image=creditscard_f
     else:
-        image=PIL_Helper.LoadImage(ResourcePath + "CC-b.png")
+        image=creditscard_b
     #image= GetFrame(picture)
     CopyrightText([], image, ColorDict["Copyright-Special"],do_bottom=False)
     return image

@@ -3,12 +3,16 @@ OS Helpers
 '''
 import os, glob
 import PIL_Helper
+import shutil
 
 def Delete(filename):
     filelist = glob.glob(filename)
     for f in filelist:
         os.remove(f)
 
+def RmRf(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
 def CleanDirectory(path=".", mkdir="workspace", rmstring="*.*"):
     dir_path = os.path.join(path, mkdir)
     if not os.path.exists(dir_path):

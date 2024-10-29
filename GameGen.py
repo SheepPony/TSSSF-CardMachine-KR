@@ -5,7 +5,7 @@ Master Game Gen
 import os, glob
 import PIL_Helper
 import argparse
-from OS_Helper import Delete, CleanDirectory, BuildPage, BuildBack, AssertDirectory
+from OS_Helper import Delete, CleanDirectory, BuildPage, BuildBack, AssertDirectory,RmRf
 from sys import exit
 import subprocess
 
@@ -14,17 +14,13 @@ import subprocess
 #individual artist naming
 #.pon files have symbols like {ALICORN} and so on.
 
-def main(folder, filepath, 
-         create_pdf=True, clean_workspace=True, page_start_num=0):
-    '''
-    @param folder: The base game folder where we'll be working.
-        E.g. TSSSF, BaBOC
-    @param filepath: The filepath (relative to the base folder) where the
-        file that defines the different cards in the game are stored.
-    '''
+SCRATCH_DIR="scratch"
+OUTPUT_DIR="output"
 
-    CardFile = open(os.path.join(folder, filepath))
-    card_set = os.path.dirname(filepath)
+def main(ponpath, create_pdf=True, clean_workspace=True, page_start_num=0):
+    pon_name=os.split(ponpath)[1]
+    CardFile = open(ponpath)
+    card_set = os.path.splitext(os.path.split(ponpath)[1])[0]
 
     # Read first line of file to determine module
     first_line = CardFile.readline()
@@ -39,22 +35,27 @@ def main(folder, filepath,
 
     # Create workspace for card images
     if clean_workspace:
-        workspace_path = CleanDirectory(path=folder, mkdir="workspace", rmstring="*.*")
+        RmRf(SCRATCH_DIR)
+        RmRf(OUTPUT_DIR)
+        workspace_path = CleanDirectory(mkdir=SCRATCH_DIR, rmstring="*.*")
+        CleanDirectory(mkdir=OUTPUT_DIR)
     else:
-        workspace_path= AssertDirectory(path=folder, mkdir="workspace")
+        workspace_path= AssertDirectory(mkdir=SCRATCH_DIR)
+        AssertDirectory(mkdir=OUTPUT_DIR)
 
     # Create image directories
-    bleed_path = CleanDirectory(path=folder+"/"+card_set, mkdir="bleed-images",rmstring="*.*")
+    
+    bleed_path = CleanDirectory(path=OUTPUT_DIR, mkdir=card_set+"_bleed-images",rmstring="*.*")
     module.BleedsPath = bleed_path
-    bleedback_path = CleanDirectory(path=folder+"/"+card_set, mkdir="bleed-backs",rmstring="*.*")
+    bleedback_path = CleanDirectory(path=OUTPUT_DIR, mkdir=card_set+"_bleed-backs",rmstring="*.*")
     module.BleedBackPath = bleedback_path
-    cropped_path = CleanDirectory(path=folder+"/"+card_set, mkdir="cropped-images",rmstring="*.*")
+    cropped_path = CleanDirectory(path=OUTPUT_DIR, mkdir=card_set+"_cropped-images",rmstring="*.*")
     module.CropPath = cropped_path
-    vassal_path = CleanDirectory(path=folder+"/"+card_set, mkdir="vassal-images",rmstring="*.*")
+    vassal_path = CleanDirectory(path=OUTPUT_DIR, mkdir=card_set+"_vassal-images",rmstring="*.*")
     module.VassalPath = vassal_path
 
     # Create output directory
-    output_folder = CleanDirectory(path=folder, mkdir=card_set,rmstring="*.pdf")
+    output_folder = OUTPUT_DIR
 
     # Load Card File and strip out comments
     cardlines = [line for line in CardFile if not line[0] in ('#', ';', '/')]
@@ -74,7 +75,7 @@ def main(folder, filepath,
     card_num=0
     for line in cardlines:
         card_num+=1
-        print(F"\r{filepath:>32s} > #{card_num:03d}\r",end='',flush=True)
+        print(F"\r{pon_name:>32s} > #{card_num:03d}\r",end='',flush=True)
         card_list.append(module.BuildCard(line,card_num))
         back_list.append(module.BuildBack(line,card_num))
         # If the card_list is big enough to make a page
@@ -142,9 +143,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     #main(args.basedir, args.set_file)
-    pn=main('TSSSF', 'Core 1.1.5/cardsKR.pon',
+    pn=main('CardDefinitions/Core_1.1.5_KR.pon',
         create_pdf=False)
-    pn=main('TSSSF', 'Extra Credit 1.0.1/cardsKR.pon',
+    pn=main('CardDefinitions/Extra-Credit_1.0.1_KR.pon',
         clean_workspace=False, page_start_num=pn)
     #main('TSSSF', 'Korean Ponies 0.0.1/cards.pon')
     #main('TSSSF', 'SheepPony One-Offs/cardsKR.pon')
