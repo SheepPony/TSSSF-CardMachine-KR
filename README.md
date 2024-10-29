@@ -1,61 +1,36 @@
-CardMachine
-by Horrible People Productions
-version: OH GOD EVERYTHING IS TERRIBLE
+# TSSSF-CardMachine (KR)
+Modified by SheepPony
+Originally by Horrible People Productions
+version: OH GOD EVERYTHING IS STILL TERRIBLE
 
-!!WARNING!!
-This script is NOT user-friendly by any stretch of the imagination! This is a slapped-together conglomeration of last-minute decisions and hasty shortcuts we've taken while maintaining our ability to make decks of cards. Unless you are a Python expert, we do NOT recommend using this tool for casually creating cards. There are much better options out there.
+## What is this?
+This is a fork of `Card Machine` by `Horrible People Games`, extensively modified to be able to handle Korean text. You can run this to generate 
 
-INSTALLATION:
-This tool relies on files being set up in a proper hierarchy:
+## Installing
+This code was created and used under Linux. I have not tested on Windows or Mac, but in theory this code should be fairly cross-platform.
 
-Base Folder > Card Set > card set files
+Please note that some required files are under a submodule. Please use the command below to clone this repo, or else the submodules may not get pulled.
+`git clone --recurse-submodules https://github.com/SheepPony/TSSSF-CardMachine-KR.git`
 
-The Base Folder represents a particular game. E.g. TSSSF, BaBOC, Dominion, Fluxx, Poker
-The Card Set is a variant of the base game, possibly an expansion, or just a collection of different versions. E.g. Core 1.0.3, Ponyville University 1.5.6.
-The base folder and card set can be named anything.
-
-Within the base folder is where you should put your "Card Art" and "resources" directories, or any other directories that contain necessary assets.
-
-To get started, create the Base Folder in the CardMachine directory. In the Base Folder, make the Card Set directory. And in the Card Set directory, put your cards.pon file. (You can see an example cards.pon file in this repository)
-
-GETTING STARTED:
-Once your files are in place, you can either:
-
-1) Edit GameGen.py so that it calls main() with the proper arguments (see the main() docstring for more info)
-2) Call the proper arguments using the command line. E.g. python GameGen.py -b TSSSF -f "Core 1.0.3/cards.pon"
-
-The script will open the filepath to cards.pon (or whatever you name it), and will call the CardGen code once for each card. It will attempt to bundle the cards created into 3x3 card images and, at the very end, compile all the images into PDFs of both the fronts and backs.
+This code depends on the `pillow` Python package.
+`ImageMagick` is required for PDF generation.
 
 
+## Running
+You must first generate the translated `.pon` file by running `python3 translator.py` under the `CardDefinitions/` directory.
 
+After doing so, run the actual card generation by executing:  
+`python3 GameGen.py CardDefinitions/Core_1.1.5__KR.pon CardDefinitions/Extra_Credit_1.0.1__KR.pon`
 
+The card images and PDFs will be generated under `output/`.
 
-This script assumes that the TSSSFCabin-Medium font is used, with special changes as described below:
+## Differences from upstream
+- This code can only generate TSSSF; support for BaBOC, Dominion, etc has been removed.
+- Directory hierarchy was shifted around to my liking.
+- Can generate PDFs of multiple card packs at once.
+- Tried to un-spaghettify the code in general.
 
-TSSSFCabin-Medium is a specialized variant on Cabin that has the symbols for different pony-related icons replacing some unicode characters. The list below covers the unicode characters that have been replaced, as well as certain {keyword}s that will trigger the change to the unicode character in the script. (See the cards_example.pon file)
- * Male = {male} = \u2642
- * Female = {female} = \u2640
- * Combination male/female = {malefemale} = \u26A4
- * Ship = {ship} = \u2764
- * Earth Pony = {earthpony} = \uE000
- * Unicorn = {unicorn} = \uE001
- * Pegasus = {pegasus} = \uE002
- * Alicorn = {alicorn} = \uE003
- * Postapocalypse/Dystopian future/hourglass = {postapocalypse} = \uE004
- 
-The script also allows the following {keyword}s as a shortcut for adding common rules text to the cards, in the same manner as the symbols above:
- * {replace} = "While in your hand, you may discard a Pony card from the grid and play this card in its place. This power cannot be copied."
- * {swap} = "You may swap 2 Pony cards on the shipping grid."
- * {3swap} = "You may swap up to 3 Pony cards on the grid."
- * {draw} = "You may draw a card from the Ship or Pony deck."
- * {goal} = "You may discard a Goal and draw a new one to replace it."
- * {search} = "You may search the Ship or Pony discard pile for a card of your choice and play it."
- * {copy} = "You may copy the power of any Pony card currently on the shipping grid, except for Changelings."
- * {hermaphrodite} = "May count as either {male} or {female} for all Goals, Ships, and powers."
- * {double pony} = "This card counts as 2 Ponies."
- * {love poison} = "Instead of playing this ship with a Pony card from your hand, or connecting two ponies already on the grid, take a Pony card from the shipping grid and reattach it elsewhere with this Ship. That card's power activates."
- * {keyword change} = "When you attach this card to the grid, you may choose one Pony card attached to this Ship. Until the end of your turn, that Pony card counts as having any one keyword of your choice, except pony names."
- * {gender change} = "When you attach this card to the grid, you may choose one Pony card attached to this Ship. Until the end of your turn, that Pony card becomes the opposite gender."
- * {race change} = "When you attach this card to the grid, you may choose one Pony card attached to this Ship. Until the end of your turn, that Pony card becomes a race of your choice. This cannot affect Changelings."
- * {timeline change} = "When you attach this card to the grid, you may choose one Pony card attached to this Ship. Until the end of your turn, that Pony card counts as {postapocalypse}."
- * {play from discard} = "You may choose to play the top card on the Pony discard pile with this Ship, rather than use a Pony card from your hand."
+## Additional Explanation
+For explanation of the translation script, or the fonts, 
+please refer to the README files of the `CardDefinitions` and `Resources` submodules.
+
