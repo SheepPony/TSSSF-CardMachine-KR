@@ -284,14 +284,9 @@ def BuildPage(card_list, grid_width, grid_height, filename,
 def BlankImage(w, h, color=(255,255,255), image_type="RGBA"):
     return Image.new(image_type, (w, h), color=color)
 
-def LoadImage(filepath, fallback="blank.png"):
-    try:
-        return Image.open(filepath)
-    except Exception:
-        if fallback:
-            return Image.open(os.path.join(os.path.split(filepath)[0], fallback))
-        else:
-            raise
+def LoadImage(filepath):
+    return Image.open(filepath)
+
 
 def ResizeImage(image, size, method=Image.Resampling.BICUBIC):
     return image.resize(size, method)
