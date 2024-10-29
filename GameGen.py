@@ -1,24 +1,20 @@
-'''
-Master Game Gen
-1.0b
-'''
 import os, glob
 import PIL_Helper
 import argparse
 from OS_Helper import Delete, CleanDirectory, BuildPage, BuildBack, AssertDirectory,RmRf
 from sys import exit
 import subprocess
-
-#TSSSF Migration TODO:
-#automagickally create vassal module :D
-#individual artist naming
-#.pon files have symbols like {ALICORN} and so on.
+import sys
 
 SCRATCH_DIR="scratch"
 OUTPUT_DIR="output"
 
-def main(ponpath, create_pdf=True, clean_workspace=True, page_start_num=0):
-    pon_name=os.split(ponpath)[1]
+page_num=0
+def generate_card_pack(ponpath):
+    global page_num
+    print("Generate:",ponpath)
+    
+    pon_name=os.path.split(ponpath)[1]
     CardFile = open(ponpath)
     card_set = os.path.splitext(os.path.split(ponpath)[1])[0]
 
@@ -32,16 +28,7 @@ def main(ponpath, create_pdf=True, clean_workspace=True, page_start_num=0):
         print("Failed to load module: " + str(ValueError))
         return
     module.CardSet = card_set
-
-    # Create workspace for card images
-    if clean_workspace:
-        RmRf(SCRATCH_DIR)
-        RmRf(OUTPUT_DIR)
-        workspace_path = CleanDirectory(mkdir=SCRATCH_DIR, rmstring="*.*")
-        CleanDirectory(mkdir=OUTPUT_DIR)
-    else:
-        workspace_path= AssertDirectory(mkdir=SCRATCH_DIR)
-        AssertDirectory(mkdir=OUTPUT_DIR)
+    
 
     # Create image directories
     
@@ -61,17 +48,9 @@ def main(ponpath, create_pdf=True, clean_workspace=True, page_start_num=0):
     cardlines = [line for line in CardFile if not line[0] in ('#', ';', '/')]
     CardFile.close()
 
-##    # Make a list of lists of cards, each one page in scale
-##    cardpages = []
-##    cardlines += ["BLANK" for i in range(1, module.TOTAL_CARDS)]
-##    cardlines.reverse()
-##    while len(cardlines) > module.TOTAL_CARDS:
-##        cardpages.append([cardlines.pop() for i in range(0,module.TOTAL_CARDS)])
-
     # Make pages
     card_list = []
     back_list = []
-    page_num = page_start_num
     card_num=0
     for line in cardlines:
         card_num+=1
@@ -83,89 +62,73 @@ def main(ponpath, create_pdf=True, clean_workspace=True, page_start_num=0):
         if len(card_list) >= module.TOTAL_CARDS:
             page_num += 1
             #print("Building Page {}...".format(page_num))
-            BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
-            BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
+            BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, SCRATCH_DIR)
+            BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, SCRATCH_DIR)
             card_list = []
             back_list = []
     
 
     # If there are leftover cards, fill in the remaining
     # card slots with blanks and gen the last page
-    page_numbers=[]
     if len(card_list) > 0:
         # Fill in the missing slots with blanks
         while len(card_list) < module.TOTAL_CARDS:
             card_list.append(module.BuildCard("BLANK"))
             back_list.append(module.BuildCard("BLANK"))
-        page_num += 1
-        #print("Building Page {}...".format(page_num))
-        BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
-        BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, workspace_path)
-        page_numbers.append(page_num)
-        
-    #Build Vassal
-    module.CompileVassalModule()
+        BuildPage(card_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, SCRATCH_DIR)
+        BuildBack(back_list, page_num, module.PAGE_WIDTH, module.PAGE_HEIGHT, SCRATCH_DIR)
     
-    if create_pdf:
-        print("\nCreating PDF...")
-        os.system(r'magick "{}/page_*.png" "{}/{}.pdf"'.format(workspace_path, output_folder, card_set))
-        print("\nCreating PDF of backs...")
-        os.system(r'magick "{}/backs_*.png" "{}/backs_{}.pdf"'.format(workspace_path, output_folder, card_set))
-        print("\nCreating Combined PDF...")
-        args=["magick"]
-        for pn in range(1,page_num+1):
-            args.append(workspace_path+F"/page_{pn:03d}.png")
-            args.append(workspace_path+F"/backs_{pn:03d}.png")
-        args.append(output_folder+"/combined_"+card_set+".pdf")
-        #print(" ".join(args))
-        subprocess.run(args,check=True)
+def generate_pdf(name="preview"):
+    imgfiles=os.listdir(SCRATCH_DIR)
+    imgfiles.sort()
+    fronts=[]
+    backs=[]
+    for imgfile in imgfiles:
+        if imgfile.startswith("page_"):
+            fronts.append(os.path.join(SCRATCH_DIR,imgfile))
+        elif imgfile.startswith("backs_"):
+            backs.append(os.path.join(SCRATCH_DIR,imgfile))
+    print("\nCreating PDF...")
+    subprocess.run(
+        ["magick"]+fronts+[os.path.join(OUTPUT_DIR,name+"_front.pdf")],
+        check=True)
+    print("\nCreating PDF of backs...")
+    subprocess.run(
+        ["magick"]+backs+[os.path.join(OUTPUT_DIR,name+"_back.pdf")],
+        check=True)
     
-    
-    return page_num
+    print("\nCreating Combined PDF...")
+    interleaved=[]
+    for front in fronts:
+        back= front.replace("page_","backs_")
+        assert back in backs
+        interleaved.append(front)
+        interleaved.append(back)
+    subprocess.run(
+        ["magick"]+interleaved+[os.path.join(OUTPUT_DIR,name+"_interleave.pdf")],
+        check=True)
 
-if __name__ == '__main__':
-    # To run this script, you have two options:
-    # 1) Run it from the command line with arguments. E.g.:
-    #       python GameGen -b TSSSF -f "Core 1.0.3/cards.pon"
-    # 2) Comment out "main(args.basedir, args.set_file)" in this file
-    #       and add a new line with the proper folder and card set
-    #       in the arguments.
-    # See the main() docstring for more info on the use of the arguments
-    parser = argparse.ArgumentParser(prog="GameGen")
 
-    parser.add_argument('-f', '--set-file', \
-                        help="Location of set file to be parsed",
-                        default="cards.pon")
-    parser.add_argument('-b', '--basedir',
-                        help="Workspace base directory with resources output directory",
-                        default="TSSSF")
+print("Args:",sys.argv)
+if len(sys.argv)<2:
+    print("You must provide one or more .pon files as an argument!")
+    sys.exit(1)
 
-    args = parser.parse_args()
+# Setup
+print("Clean&Setup directories...")
+RmRf(OUTPUT_DIR)
+RmRf(SCRATCH_DIR)
+os.mkdir(OUTPUT_DIR)
+os.mkdir(SCRATCH_DIR)
 
-    #main(args.basedir, args.set_file)
-    pn=main('CardDefinitions/Core_1.1.5_KR.pon',
-        create_pdf=False)
-    pn=main('CardDefinitions/Extra-Credit_1.0.1_KR.pon',
-        clean_workspace=False, page_start_num=pn)
-    #main('TSSSF', 'Korean Ponies 0.0.1/cards.pon')
-    #main('TSSSF', 'SheepPony One-Offs/cardsKR.pon')
-    #main('TSSSF', 'SheepPony One-Offs/cards.pon')
-    
-    #main('TSSSF', '2014 Con Exclusives/cards.pon')
-    #main('TSSSF', 'BABScon 2015/cards.pon')
-    #main('TSSSF', 'Core 1.0.5/cards.pon')
-    #main('TSSSF', 'Core 1.0.5 Delta/cards.pon')
-    #main('TSSSF', 'Core 1.1.0/cards.pon')
-    #main('TSSSF', 'Core 1.1.0 Test/cards.pon')
-    #main('TSSSF', 'Custom Card for/cards.pon')
-    #main('TSSSF', 'Extra Credit 0.10.4/cards.pon')
-    #main('TSSSF', 'Indiegogo/cards.pon')
-    #main('TSSSF', 'Patreon Expansion 1/cards.pon')
-    #main('TSSSF', 'Ponycon Panel 2015/cards.pon')
-    #main('TSSSF', 'Ponyville University 0.0.2/cards.pon')
-    #main('TSSSF', 'Ponyville University 1.0.1/cards.pon')
-    #main('TSSSF', 'Ponyville University 1.0.2/cards.pon')
-    #main('TSSSF', 'Thank You/cards.pon')
-    #main('BaBOC', 'BaBOC 0.1.0/deck.cards')
-    
-    print("Done!")
+# Actual card generation
+print("Start generation...")
+for arg in sys.argv[1:]:
+    generate_card_pack(arg)
+generate_pdf()
+
+# Cleanup
+print("Cleanup...")
+RmRf(SCRATCH_DIR)
+
+print("Done!")
