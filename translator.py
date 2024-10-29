@@ -159,6 +159,6 @@ def translate(ponE,ponK):
 
 # All the translation targets.
 translate("CardDefinitions/Core_1.1.5.pon",
-		  "CardDefinitions/Core_1.1.5_KR.pon")
-translate("CardDefinitions/Extra-Credit_1.0.1.pon",
-		  "CardDefinitions/Extra-Credit_1.0.1_KR.pon")
+		  "CardDefinitions/Core_1.1.5__KR.pon")
+translate("CardDefinitions/Extra_Credit_1.0.1.pon",
+		  "CardDefinitions/Extra_Credit_1.0.1__KR.pon")

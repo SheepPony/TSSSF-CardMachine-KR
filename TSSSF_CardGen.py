@@ -14,7 +14,7 @@ TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range
 #ARTIST = "Pixel Prism"
 
 if LANGMODE=="KR" and IS_TRANSLATION:
-    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁vDEV[2024-10-29a]'
+    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁vDEV[2024-10-29b]'
 else:
     VERSION_ADDITIONAL=''
     
@@ -28,7 +28,7 @@ PAGE_HEIGHT = 3
 TOTAL_CARDS = PAGE_WIDTH*PAGE_HEIGHT
 
 
-CardSet = os.path.dirname("deck.cards") # will be set by GameGen.py
+CardSet = None # will be set by GameGen.py
 
 CardPath = "CardArt/"
 CardTexturePath = "Resources/CardTextures/"

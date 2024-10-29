@@ -16,7 +16,7 @@ def generate_card_pack(ponpath):
     
     pon_name=os.path.split(ponpath)[1]
     CardFile = open(ponpath)
-    card_set = os.path.splitext(os.path.split(ponpath)[1])[0]
+    card_set = os.path.splitext(os.path.split(ponpath)[1])[0].split("__")[0]
 
     # Read first line of file to determine module
     first_line = CardFile.readline()
