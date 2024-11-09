@@ -3,8 +3,12 @@ Modified by SheepPony
 Originally by Horrible People Productions  
 version: OH GOD EVERYTHING IS STILL TERRIBLE
 
+## Where are the decks?
+[Find it on my site.](https://sheeppony.com/TSSSF-KR)
+
 ## What is this?
-This is a fork of `Card Machine` by `Horrible People Games`, extensively modified to be able to handle Korean text. You can use this to generate the Korean translated versions of Core and Extra Credit decks.
+This is a fork of `Card Machine` by `Horrible People Games`, extensively modified to be able to handle Korean text. You can use this to generate the Korean translated versions of Core and Extra Credit decks.  
+Be warned that this code was hacked together from an already hacky codebase, so it's not the prettiest. It has 'done its job' of generating the Korean decks, so I don't plan on improving this code anytime soon.
 
 ## Installing
 This code was created and used under Linux. I have not tested on Windows or Mac, but in theory this code should be fairly cross-platform.
@@ -25,7 +29,8 @@ After doing so, run the actual card generation by executing:
 The card images and PDFs will be generated under `output/`.
 
 ## Differences from upstream
-- This code can only generate TSSSF; support for BaBOC, Dominion, etc has been removed.
+- Korean support and various hacky fixes
+- Support for BaBOC, Dominion, etc has been removed. This only supports TSSSF.
 - Directory hierarchy was shifted around to my liking.
 - Can generate PDFs of multiple card packs at once.
 - Tried to un-spaghettify the code in general.
