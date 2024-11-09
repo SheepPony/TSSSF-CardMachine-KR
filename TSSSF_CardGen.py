@@ -39,6 +39,7 @@ BleedsPath = None # will be set by GameGen.py
 BleedBackPath = None # will be set by GameGen.py
 CropPath = None # will be set by GameGen.py
 VassalPath = None # will be set by GameGen.py
+FilenamesFull = None # will be set by GameGen.py
 
 
 import collections
@@ -458,9 +459,10 @@ if config.enforce_card_dimensions:
 
 def FixFileName(tagin):
     FileName = tagin.replace("\n", "")
-    invalid_chars = [",", "?", '"', ":"]
+    invalid_chars = ",?\":!/."
     for c in invalid_chars:
         FileName = FileName.replace(c,"")
+    FileName=FileName.replace(" ","_")
     FileName = u"{0}.png".format(FileName)
     #print FileName
     return FileName
@@ -515,7 +517,11 @@ def BuildCard(linein,cardno=0):
                 filename = FixFileName(tags[0]+"_"+tags[1])
             else:
                 filename = FixFileName(tags[0]+"_"+tags[3])
-            filename=F"{cardno:03d}_"+filename
+                
+            if FilenamesFull:
+                filename=F"{cardno:03d}_"+filename
+            else:
+                filename=F"{cardno:03d}.png"
             SaveCard(os.path.join(BleedsPath, filename), im)
             im_crop=im.crop(croprect)
             SaveCard(os.path.join(CropPath, filename), im_crop)
@@ -563,7 +569,11 @@ def BuildBack(linein,cardno=0):
                 filename = FixFileName(tags[0]+"_"+tags[1])
             else:
                 filename = FixFileName(tags[0]+"_"+tags[3])
-            filename=F"{cardno:03d}_"+filename
+                
+            if FilenamesFull:
+                filename=F"{cardno:03d}_"+filename
+            else:
+                filename=F"{cardno:03d}.png"
             SaveCard(os.path.join(BleedBackPath, filename), im)
         else:
             im_crop=im.crop(croprect)

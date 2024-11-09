@@ -10,6 +10,9 @@ def Delete(filename):
     for f in filelist:
         os.remove(f)
 
+def MkDirP(path):
+    os.makedirs(path,exist_ok=True)
+
 def RmRf(path):
     if os.path.exists(path):
         shutil.rmtree(path)

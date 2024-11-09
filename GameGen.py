@@ -1,17 +1,43 @@
 import os, glob
+import os.path
 import PIL_Helper
 import argparse
-from OS_Helper import Delete, CleanDirectory, BuildPage, BuildBack, AssertDirectory,RmRf
+from OS_Helper import Delete, CleanDirectory, BuildPage, BuildBack, AssertDirectory,RmRf,MkDirP
 from sys import exit
 import subprocess
 import sys
+
+
+print("Args:",sys.argv)
+target_pons=[]
+arg_consolidate = False
+arg_full_filenames = False
+for i in sys.argv[1:]:
+    if i.startswith("-"):
+        if i=="--consolidate":
+            arg_consolidate=True
+        elif i=="--full-filenames":
+            arg_full_filenames=True
+        else:
+            print("What?",i)
+            0/0
+    else:
+        print("Target PON:",i)
+        target_pons.append(i)
+
+
+if len(target_pons)<1:
+    print("You must provide one or more .pon files as an argument!")
+    sys.exit(1)
+
 
 SCRATCH_DIR="scratch"
 OUTPUT_DIR="output"
 
 page_num=0
+card_num=0
 def generate_card_pack(ponpath):
-    global page_num
+    global page_num, card_num
     print("Generate:",ponpath)
     
     pon_name=os.path.split(ponpath)[1]
@@ -31,27 +57,39 @@ def generate_card_pack(ponpath):
     
 
     # Create image directories
+    if arg_consolidate:
+        dirname="Combined"
+    else:
+        dirname=card_set
     
-    bleed_path = CleanDirectory(path=OUTPUT_DIR, mkdir=card_set+"_bleed-images",rmstring="*.*")
+    bleed_path = os.path.join(OUTPUT_DIR, dirname+"_bleed-images")
+    MkDirP(bleed_path)
     module.BleedsPath = bleed_path
-    bleedback_path = CleanDirectory(path=OUTPUT_DIR, mkdir=card_set+"_bleed-backs",rmstring="*.*")
+    
+    bleedback_path = os.path.join(OUTPUT_DIR, dirname+"_bleed-backs")
+    MkDirP(bleedback_path)
     module.BleedBackPath = bleedback_path
-    cropped_path = CleanDirectory(path=OUTPUT_DIR, mkdir=card_set+"_cropped-images",rmstring="*.*")
+    
+    cropped_path = os.path.join(OUTPUT_DIR, dirname+"_cropped-images")
+    MkDirP(cropped_path)
     module.CropPath = cropped_path
-    vassal_path = CleanDirectory(path=OUTPUT_DIR, mkdir=card_set+"_vassal-images",rmstring="*.*")
+    
+    vassal_path = os.path.join(OUTPUT_DIR, dirname+"_vassal-images")
+    MkDirP(vassal_path)
     module.VassalPath = vassal_path
-
-    # Create output directory
-    output_folder = OUTPUT_DIR
+    
+    module.FilenamesFull = arg_full_filenames
+    
 
     # Load Card File and strip out comments
     cardlines = [line for line in CardFile if not line[0] in ('#', ';', '/')]
     CardFile.close()
-
+    
+    if not arg_consolidate:
+        card_num=0
     # Make pages
     card_list = []
     back_list = []
-    card_num=0
     for line in cardlines:
         card_num+=1
         print(F"\r{pon_name:>32s} > #{card_num:03d}\r",end='',flush=True)
@@ -109,10 +147,7 @@ def generate_pdf(name="preview"):
         check=True)
 
 
-print("Args:",sys.argv)
-if len(sys.argv)<2:
-    print("You must provide one or more .pon files as an argument!")
-    sys.exit(1)
+
 
 # Setup
 print("Clean&Setup directories...")
@@ -123,8 +158,8 @@ os.mkdir(SCRATCH_DIR)
 
 # Actual card generation
 print("Start generation...")
-for arg in sys.argv[1:]:
-    generate_card_pack(arg)
+for p in target_pons:
+    generate_card_pack(p)
 generate_pdf()
 
 # Cleanup
