@@ -14,7 +14,7 @@ TYPE, PICTURE, SYMBOLS, TITLE, KEYWORDS, BODY, FLAVOR, EXPANSION, CLIENT = range
 #ARTIST = "Pixel Prism"
 
 if LANGMODE=="KR" and IS_TRANSLATION:
-    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁vDEV[2024-10-29b]'
+    VERSION_ADDITIONAL='사이버 멸종위기종 보호센터 번역팀 / 트씁v1.0.0'
 else:
     VERSION_ADDITIONAL=''
     
@@ -458,8 +458,8 @@ if config.enforce_card_dimensions:
         
 
 def FixFileName(tagin):
-    FileName = tagin.replace("\n", "")
-    invalid_chars = ",?\":!/."
+    FileName = tagin.replace("\n", " ")
+    invalid_chars = ",?\":!/.&"
     for c in invalid_chars:
         FileName = FileName.replace(c,"")
     FileName=FileName.replace(" ","_")
